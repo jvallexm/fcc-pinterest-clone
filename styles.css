@@ -1,0 +1,147 @@
+body
+{
+  background-color: #dfccff;
+}
+.post-wrapper
+{
+  background-color: white;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 2px 2px 2px #cdafff,
+              -1px 1px 1px #dac4ff,
+              1px -1px 1px #dac4ff,
+              -1px -1px 1px #dac4ff;
+  
+} 
+.img-smol
+{
+  border-radius: 5px;
+  max-width: 300px;
+  max-height: 250px;
+  position: relative;
+}
+.img-larg
+{
+  border-radius: 5px;
+  max-width: 600px;
+  max-height: 500px;
+  position: relative;
+}
+.padding-10
+{
+  padding: 10px;
+}
+.pad-top
+{
+  padding-top: 10px;
+}  
+.board
+{
+  min-width: 900px;
+  position: relative;
+}
+.head
+{
+  font-family: "Pacifico";
+  background-color: #995bff;
+  color: white;
+  border-radius: 5px;
+  min-width: 500px;
+  text-shadow: 2px 2px 2px black;
+  box-shadow: 2px 2px 2px #cdafff,
+              -1px 1px 1px #dac4ff,
+              1px -1px 1px #dac4ff,
+              -1px -1px 1px #dac4ff;
+}
+.cursive
+{
+  font-family: "Francois One";
+  max-width: 300px;   
+}
+/* Source: http://snipplr.com/view/10979/css-cross-browser-word-wrap */
+.wordwrap { 
+   white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */    
+   white-space: -pre-wrap;     /* Opera <7 */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-word;      /* IE */
+}
+.tags
+{
+  font-family: "Francois One";
+  color: gray;
+}
+.btn
+{
+  font-family: "Francois One";
+  text-shadow: 1px 1px 2px black;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: #995bff;
+  color: white;
+  box-shadow: 2px 2px 2px #cdafff,
+              -1px 1px 1px #dac4ff,
+              1px -1px 1px #dac4ff,
+              -1px -1px 1px #dac4ff;
+}
+.col-md-2
+{
+  margin-right: -20px;
+}
+#gray-out
+{
+  top: 0px;
+  left: 0px;
+  z-index: 2;
+  position: fixed;
+  background-color: rgba(200, 200, 200, .72);
+  height: 100%;
+  min-width:100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;  
+}
+#edit
+{
+  max-width: 600px;
+}
+.max-500
+{
+  max-width: 500px;
+  margin: 10px;
+   margin-top: 20px;
+}
+input
+{
+  width: 100%;
+  text-align: center;
+}
+.posted-by
+{
+  font-size: 12px;
+}
+.front
+{
+  z-index: 1;
+}
+.padding-bottom
+{
+  padding-bottom: 10px;
+}
+.btn-danger
+{
+  background-color: red !important;
+}
+.btn-regular
+{
+  width: 150px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.error
+{
+  color: red;
+}
