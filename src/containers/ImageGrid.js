@@ -90,7 +90,7 @@ class WrappedImage extends React.Component
   {
     if(this.props.post.author_id == this.props.author_id)
       return false;
-    if(this.props.author_id == undefined)
+    if(this.props.author_id == "12")
       return false;
     if(this.props.post.reactions.indexOf(this.props.author_id)==-1)
       this.props.socket.emit("do a like",{
@@ -126,9 +126,13 @@ class WrappedImage extends React.Component
              )}
           </div> 
            <div className="row">
-          <div className= {this.props.post.reactions.indexOf(this.props.author_id)==-1 && this.props.post.author_id != this.props.author_id ? "col-sm-6 heart" :
-                          this.props.post.reactions.indexOf(this.props.author_id)!=-1 
-                          && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 ? "col-sm-6 error" : "col-sm-6"}
+          <div className= {    this.props.post.reactions.indexOf(this.props.author_id)==-1 
+                            && this.props.post.author_id != this.props.author_id 
+                            ? "col-sm-6 heart" :
+                          (this.props.post.reactions.indexOf(this.props.author_id)!=-1 
+                          && this.props.post.author_id != this.props.author_id 
+                          && this.props.post.reactions.length > 0)
+                          || (this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0) ? "col-sm-6 error" : "col-sm-6"}
                 onClick={this.doALike}>          
                           {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}
                           <i className="fa fa-heart"/></div>

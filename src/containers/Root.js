@@ -24,6 +24,7 @@ export default class App extends React.Component
     this.responseFacebook = this.responseFacebook.bind(this);
     this.showById = this.showById.bind(this);
     this.showAll = this.showAll.bind(this);
+    this.showLiked = this.showLiked.bind(this);
   }
   componentWillMount()
   {
@@ -65,6 +66,23 @@ export default class App extends React.Component
       }
       this.setState({images: images});
     });
+    socket.on("post dislike",(data)=>{
+      let images = this.state.images;
+      for(var i=0;i<images.length;i++)
+      {
+        if(images[i]._id == data._id)
+        {
+          let reactions = [];
+          for(var j=0;j<images[i].reactions.length;j++)
+          {
+            if(images[i].reactions[j] != data.whoLikedIt)
+              reactions.push(images[i].reactions[j]);
+          }
+          images[i].reactions = reactions;
+        }
+      }
+      this.setState({images: images});
+    });
   }
   closeOut()
   {
@@ -89,6 +107,16 @@ export default class App extends React.Component
     for(var i=0;i<this.state.images.length;i++)
     {
       if(this.state.images[i].author_id == id)
+       special_images.push(this.state.images[i]);
+    }
+    this.setState({showSpecial: true, special_images: special_images});
+  }
+  showLiked()
+  {
+    let special_images = [];
+    for(var i=0;i<this.state.images.length;i++)
+    {
+      if(this.state.images[i].reactions.indexOf(this.state.userData._id) > -1)
        special_images.push(this.state.images[i]);
     }
     this.setState({showSpecial: true, special_images: special_images});
@@ -154,7 +182,8 @@ export default class App extends React.Component
             <button className="btn well"
                     onClick={this.showAll}>What's New? <i className="fa fa-flash"/></button>
             {this.state.loggedIn ? 
-            <button className="btn well">Favorites <i className="fa fa-heart"/></button> : "" }
+            <button className="btn well"
+                    onClick={this.showLiked}>Favorites <i className="fa fa-heart"/></button> : "" }
               <button className="btn well">Search <i className="fa fa-search"/></button>
             </div>  
             <div className="col-md-10">

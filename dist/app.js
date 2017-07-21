@@ -16630,7 +16630,7 @@ var WrappedImage = function (_React$Component2) {
     key: 'doALike',
     value: function doALike() {
       if (this.props.post.author_id == this.props.author_id) return false;
-      if (this.props.author_id == undefined) return false;
+      if (this.props.author_id == "12") return false;
       if (this.props.post.reactions.indexOf(this.props.author_id) == -1) this.props.socket.emit("do a like", {
         _id: this.props.post._id,
         whoLikedIt: this.props.author_id
@@ -16686,7 +16686,7 @@ var WrappedImage = function (_React$Component2) {
             { className: 'row' },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
-              { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "col-sm-6 heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 ? "col-sm-6 error" : "col-sm-6",
+              { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "col-sm-6 heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0 ? "col-sm-6 error" : "col-sm-6",
                 onClick: this.doALike },
               this.props.post.reactions.length > 0 ? this.props.post.reactions.length + " " : "",
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' })
@@ -16779,6 +16779,7 @@ var App = function (_React$Component) {
     _this.responseFacebook = _this.responseFacebook.bind(_this);
     _this.showById = _this.showById.bind(_this);
     _this.showAll = _this.showAll.bind(_this);
+    _this.showLiked = _this.showLiked.bind(_this);
     return _this;
   }
 
@@ -16819,6 +16820,19 @@ var App = function (_React$Component) {
         }
         _this2.setState({ images: images });
       });
+      socket.on("post dislike", function (data) {
+        var images = _this2.state.images;
+        for (var i = 0; i < images.length; i++) {
+          if (images[i]._id == data._id) {
+            var reactions = [];
+            for (var j = 0; j < images[i].reactions.length; j++) {
+              if (images[i].reactions[j] != data.whoLikedIt) reactions.push(images[i].reactions[j]);
+            }
+            images[i].reactions = reactions;
+          }
+        }
+        _this2.setState({ images: images });
+      });
     }
   }, {
     key: 'closeOut',
@@ -16845,6 +16859,15 @@ var App = function (_React$Component) {
       var special_images = [];
       for (var i = 0; i < this.state.images.length; i++) {
         if (this.state.images[i].author_id == id) special_images.push(this.state.images[i]);
+      }
+      this.setState({ showSpecial: true, special_images: special_images });
+    }
+  }, {
+    key: 'showLiked',
+    value: function showLiked() {
+      var special_images = [];
+      for (var i = 0; i < this.state.images.length; i++) {
+        if (this.state.images[i].reactions.indexOf(this.state.userData._id) > -1) special_images.push(this.state.images[i]);
       }
       this.setState({ showSpecial: true, special_images: special_images });
     }
@@ -16956,7 +16979,8 @@ var App = function (_React$Component) {
               ),
               this.state.loggedIn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'button',
-                { className: 'btn well' },
+                { className: 'btn well',
+                  onClick: this.showLiked },
                 'Favorites ',
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' })
               ) : "",
