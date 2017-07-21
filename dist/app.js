@@ -16579,24 +16579,17 @@ var ImageGrid = function (_React$Component) {
         'div',
         { ref: 'grid', className: 'board' },
         this.props.images.map(function (d, i) {
-          return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            WrappedImage,
-            { key: JSON.stringify(d), post: d, author_id: _this2.props.author_id, socket: _this2.props.socket,
-              className: _this2.state.embiggened == i ? "front" : "",
-              grayOut: _this2.props.grayOut,
-              embiggen: function embiggen() {
-                return _this2.embiggen(i);
-              },
-              thisOne: i,
-              whichOne: _this2.state.embiggened,
-              tick: _this2.tick },
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { className: _this2.state.embiggened == i ? "img-larg" : "img-smol",
-              onClick: function onClick() {
-                return _this2.embiggen(i);
-              },
-              src: d.link
-            })
-          );
+          return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(WrappedImage, { key: JSON.stringify(d), post: d, author_id: _this2.props.author_id, socket: _this2.props.socket,
+            className: _this2.state.embiggened == i ? "front" : "",
+            grayOut: _this2.props.grayOut,
+            embiggen: function embiggen() {
+              return _this2.embiggen(i);
+            },
+            thisOne: i,
+            whichOne: _this2.state.embiggened,
+            tick: _this2.tick,
+            showByTag: _this2.props.showByTag,
+            showById: _this2.props.showById });
         })
       );
     }
@@ -16654,8 +16647,14 @@ var WrappedImage = function (_React$Component2) {
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
           { className: 'text-left posted-by' },
-          'Posted by ',
-          this.props.post.author
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'span',
+            { onClick: function onClick() {
+                return _this4.props.showById(_this4.props.post.author_id);
+              } },
+            'Posted by ',
+            this.props.post.author
+          )
         ),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
@@ -16673,7 +16672,10 @@ var WrappedImage = function (_React$Component2) {
                 //change to replace all
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                   'span',
-                  { key: JSON.stringify(d) },
+                  { key: JSON.stringify(d),
+                    onClick: function onClick() {
+                      return _this4.props.showByTag(d);
+                    } },
                   '#',
                   d.replace(/_/g, " "),
                   i < _this4.props.post.tags.length - 1 ? " " : ""
@@ -16780,6 +16782,7 @@ var App = function (_React$Component) {
     _this.showById = _this.showById.bind(_this);
     _this.showAll = _this.showAll.bind(_this);
     _this.showLiked = _this.showLiked.bind(_this);
+    _this.showByTag = _this.showByTag.bind(_this);
     return _this;
   }
 
@@ -16872,6 +16875,15 @@ var App = function (_React$Component) {
       this.setState({ showSpecial: true, special_images: special_images });
     }
   }, {
+    key: 'showByTag',
+    value: function showByTag(tag) {
+      var special_images = [];
+      for (var i = 0; i < this.state.images.length; i++) {
+        if (this.state.images[i].tags.indexOf(tag) > -1) special_images.push(this.state.images[i]);
+      }
+      this.setState({ showSpecial: true, special_images: special_images });
+    }
+  }, {
     key: 'showAll',
     value: function showAll() {
       this.setState({ showSpecial: false });
@@ -16946,6 +16958,13 @@ var App = function (_React$Component) {
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-plus' }),
                 ' Add a New Reaction'
               ) : "",
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'button',
+                { className: 'btn well',
+                  onClick: this.showAll },
+                'Show All Reactions ',
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-flash' })
+              ),
               this.state.loggedIn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'button',
                 { className: 'btn well',
@@ -16970,13 +16989,6 @@ var App = function (_React$Component) {
                 fields: 'name,picture',
                 callback: this.responseFacebook,
                 onClick: console.log("trying to login with facebook") }) : "",
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'button',
-                { className: 'btn well',
-                  onClick: this.showAll },
-                'What\'s New? ',
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-flash' })
-              ),
               this.state.loggedIn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'button',
                 { className: 'btn well',
@@ -16997,7 +17009,9 @@ var App = function (_React$Component) {
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__ImageGrid_js__["a" /* default */], { images: this.state.showSpecial ? this.state.special_images : this.state.images,
                 grayOut: this.grayOut,
                 author_id: this.state.userData != undefined ? this.state.userData._id : "12",
-                socket: socket })
+                socket: socket,
+                showByTag: this.showByTag,
+                showById: this.showById })
             )
           )
         )

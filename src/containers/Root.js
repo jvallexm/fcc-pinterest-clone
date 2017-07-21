@@ -25,6 +25,7 @@ export default class App extends React.Component
     this.showById = this.showById.bind(this);
     this.showAll = this.showAll.bind(this);
     this.showLiked = this.showLiked.bind(this);
+    this.showByTag = this.showByTag.bind(this);
   }
   componentWillMount()
   {
@@ -121,6 +122,16 @@ export default class App extends React.Component
     }
     this.setState({showSpecial: true, special_images: special_images});
   }
+  showByTag(tag)
+  {
+    let special_images = [];
+    for(var i=0;i<this.state.images.length;i++)
+    {
+      if(this.state.images[i].tags.indexOf(tag) > -1)
+       special_images.push(this.state.images[i]);
+    }
+    this.setState({showSpecial: true, special_images: special_images}); 
+  }
   showAll()
   {
     this.setState({showSpecial: false});
@@ -160,6 +171,8 @@ export default class App extends React.Component
               </button>  
             : ""
             }
+            <button className="btn well"
+                    onClick={this.showAll}>Show All Reactions <i className="fa fa-flash"/></button>
             {this.state.loggedIn    
             ? <button className="btn well"
                       onClick={this.state.userData != undefined ? 
@@ -179,8 +192,7 @@ export default class App extends React.Component
               callback={this.responseFacebook}
               onClick={console.log("trying to login with facebook")}/>
             :""}
-            <button className="btn well"
-                    onClick={this.showAll}>What's New? <i className="fa fa-flash"/></button>
+            
             {this.state.loggedIn ? 
             <button className="btn well"
                     onClick={this.showLiked}>Favorites <i className="fa fa-heart"/></button> : "" }
@@ -190,7 +202,9 @@ export default class App extends React.Component
               <ImageGrid images={this.state.showSpecial ? this.state.special_images : this.state.images}
                          grayOut={this.grayOut}
                          author_id={this.state.userData!=undefined ? this.state.userData._id : "12"}
-                         socket={socket}/>
+                         socket={socket}
+                         showByTag={this.showByTag}
+                         showById={this.showById}/>
             </div>  
           </div>  
         </div>  

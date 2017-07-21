@@ -181,7 +181,7 @@ io.on('connection', (socket) => {
          {
            var users = db.collection('users');
            var reblog = ()=>{
-             users.update({_id: data.whoLikedIt},{$pull: {posts: data._id}})  
+             users.update({_id: data.whoLikedIt},{$pull: {post: data._id}})  
            };
            reblog(db,()=>{db.close();});
          }

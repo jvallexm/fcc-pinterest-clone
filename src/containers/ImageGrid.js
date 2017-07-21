@@ -55,19 +55,19 @@ export default class ImageGrid extends React.Component
   {
     return(
       <div ref="grid" className="board">
-        {this.props.images.map((d,i)=>
+        {
+        this.props.images.map((d,i)=>
+        
           <WrappedImage key={JSON.stringify(d)} post={d} author_id={this.props.author_id} socket={this.props.socket}
             className={this.state.embiggened==i ? "front" : ""} 
             grayOut={this.props.grayOut}
             embiggen={()=>this.embiggen(i)}
             thisOne = {i}
             whichOne = {this.state.embiggened}
-            tick={this.tick}>
-            <img className={this.state.embiggened==i ? "img-larg" : "img-smol"}
-                 onClick={()=>this.embiggen(i)}
-                 src={d.link}
-                 />
-          </WrappedImage>                       
+            tick={this.tick}
+            showByTag={this.props.showByTag} 
+            showById={this.props.showById}/>
+            
         )}
       </div>
     );
@@ -113,7 +113,7 @@ class WrappedImage extends React.Component
             onLoad={this.loadItUp}/>
        {/*this.props.children*/}
         <div className="text-left posted-by">
-        Posted by {this.props.post.author}
+          <span onClick={()=>this.props.showById(this.props.post.author_id)}>Posted by {this.props.post.author}</span>
         </div>  
         <div className="text-center container-fluid pad-top">
           <div className={this.props.whichOne == this.props.thisOne ? "cursive wordwrap" :"cursive wordwrap max-250"}>
@@ -122,7 +122,8 @@ class WrappedImage extends React.Component
           <div className={this.props.whichOne == this.props.thisOne ? "tags wordwrap" :"tags wordwrap max-250"}>
              {this.props.post.tags.map((d,i)=>
              //change to replace all
-               <span key={JSON.stringify(d)}>#{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
+               <span key={JSON.stringify(d)}
+                     onClick={()=>this.props.showByTag(d)}>#{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
              )}
           </div> 
            <div className="row">
