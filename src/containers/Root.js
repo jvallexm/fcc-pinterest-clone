@@ -55,7 +55,16 @@ export default class App extends React.Component
       });
       this.setState({images: sortedPosts});
     });
-    
+    socket.on("post like",(data)=>{
+      let images = this.state.images;
+      console.log("Who liked it: " + data.whoLikedIt);
+      for(var i=0;i<images.length;i++)
+      {
+        if(images[i]._id == data._id)
+          images[i].reactions.push(data.whoLikedIt);
+      }
+      this.setState({images: images});
+    });
   }
   closeOut()
   {
@@ -150,7 +159,8 @@ export default class App extends React.Component
             <div className="col-md-10">
               <ImageGrid images={this.state.showSpecial ? this.state.special_images : this.state.images}
                          grayOut={this.grayOut}
-                         author_id={this.state.userData!=undefined ? this.state.userData._id : "12"}/>
+                         author_id={this.state.userData!=undefined ? this.state.userData._id : "12"}
+                         socket={socket}/>
             </div>  
           </div>  
         </div>  

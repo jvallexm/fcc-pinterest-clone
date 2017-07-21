@@ -16572,7 +16572,7 @@ var ImageGrid = function (_React$Component) {
         this.props.images.map(function (d, i) {
           return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             WrappedImage,
-            { key: JSON.stringify(d), post: d, author_id: _this2.props.author_id,
+            { key: JSON.stringify(d), post: d, author_id: _this2.props.author_id, socket: _this2.props.socket,
               className: _this2.state.embiggened == i ? "front" : "",
               grayOut: _this2.props.grayOut },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { className: _this2.state.embiggened == i ? "img-larg" : "img-smol",
@@ -16599,10 +16599,24 @@ var WrappedImage = function (_React$Component2) {
   function WrappedImage(props) {
     _classCallCheck(this, WrappedImage);
 
-    return _possibleConstructorReturn(this, (WrappedImage.__proto__ || Object.getPrototypeOf(WrappedImage)).call(this, props));
+    var _this3 = _possibleConstructorReturn(this, (WrappedImage.__proto__ || Object.getPrototypeOf(WrappedImage)).call(this, props));
+
+    _this3.doALike = _this3.doALike.bind(_this3);
+    return _this3;
   }
 
   _createClass(WrappedImage, [{
+    key: 'doALike',
+    value: function doALike() {
+      if (this.props.post.reactions.indexOf(this.props.author_id) == -1) this.props.socket.emit("do a like", {
+        _id: this.props.post._id,
+        whoLikedIt: this.props.author_id
+      });else this.props.socket.emit("do a dislike", {
+        _id: this.props.post._id,
+        whoLikedIt: this.props.author_id
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this4 = this;
@@ -16629,34 +16643,35 @@ var WrappedImage = function (_React$Component2) {
             'div',
             { className: 'tags wordwrap' },
             this.props.post.tags.map(function (d, i) {
-              return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'span',
-                { key: JSON.stringify(d) },
-                '#',
-                d.replace("_", " "),
-                i < _this4.props.post.tags.length - 1 ? " " : ""
+              return (
+                //change to replace all
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'span',
+                  { key: JSON.stringify(d) },
+                  '#',
+                  d.replace(/_/g, " "),
+                  i < _this4.props.post.tags.length - 1 ? " " : ""
+                )
               );
             })
           ),
-          this.props.author_id == this.props.post.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
             { className: 'row' },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
-              { className: 'col-sm-6' },
+              { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "col-sm-6 heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 ? "col-sm-6 error" : "col-sm-6",
+                onClick: this.doALike },
+              this.props.post.reactions.length > 0 ? this.props.post.reactions.length + " " : "",
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' })
             ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            this.props.author_id != this.props.post.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
               { className: 'col-sm-6' },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange' })
-            )
-          ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'div',
-            { className: 'row' },
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
-              { className: 'col-sm-12' },
+              { className: 'col-sm-6' },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-gear',
                 onClick: function onClick() {
                   return _this4.props.grayOut(false, _this4.props.post);
@@ -16769,6 +16784,14 @@ var App = function (_React$Component) {
           if (a._id > b._id) return -1;else return 1;
         });
         _this2.setState({ images: sortedPosts });
+      });
+      socket.on("post like", function (data) {
+        var images = _this2.state.images;
+        console.log("Who liked it: " + data.whoLikedIt);
+        for (var i = 0; i < images.length; i++) {
+          if (images[i]._id == data._id) images[i].reactions.push(data.whoLikedIt);
+        }
+        _this2.setState({ images: images });
       });
     }
   }, {
@@ -16918,7 +16941,8 @@ var App = function (_React$Component) {
               { className: 'col-md-10' },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__ImageGrid_js__["a" /* default */], { images: this.state.showSpecial ? this.state.special_images : this.state.images,
                 grayOut: this.grayOut,
-                author_id: this.state.userData != undefined ? this.state.userData._id : "12" })
+                author_id: this.state.userData != undefined ? this.state.userData._id : "12",
+                socket: socket })
             )
           )
         )

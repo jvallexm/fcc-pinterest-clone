@@ -145,3 +145,7 @@ input
 {
   color: red;
 }
+.heart:hover
+{
+  color: red;
+}

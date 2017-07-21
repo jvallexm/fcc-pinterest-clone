@@ -98,12 +98,19 @@ io.on('connection', (socket) => {
             var pushTo = ()=>
             {
                users.update({_id: data.push_to},{$push: {posts: data.post._id}});
-               socket.emit("force post update",{force: "posts"});
+               io.sockets.emit("force post update", {force: "posts"});
                db.close();
             }
             postOne(db);
          }
       });
+   });
+   
+   socket.on("do a like",(data)=>{
+      socket.emit("post like", {
+         _id: data._id,
+         whoLikedIt: data.whoLikedIt
+      }); 
    });
    
 //below from https://www.codementor.io/chrisharrington/how-to-implement-twitter-sign-expressjs-oauth-du107vbhy

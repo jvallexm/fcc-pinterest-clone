@@ -47,7 +47,7 @@ export default class ImageGrid extends React.Component
     return(
       <div ref="grid" className="board">
         {this.props.images.map((d,i)=>
-          <WrappedImage key={JSON.stringify(d)} post={d} author_id={this.props.author_id}
+          <WrappedImage key={JSON.stringify(d)} post={d} author_id={this.props.author_id} socket={this.props.socket}
             className={this.state.embiggened==i ? "front" : ""} 
             grayOut={this.props.grayOut}>
             <img className={this.state.embiggened==i ? "img-larg" : "img-smol"}
@@ -66,6 +66,20 @@ class WrappedImage extends React.Component
   constructor(props)
   {
     super(props);
+    this.doALike = this.doALike.bind(this);
+  }
+  doALike()
+  {
+    if(this.props.post.reactions.indexOf(this.props.author_id)==-1)
+      this.props.socket.emit("do a like",{
+         _id: this.props.post._id,
+         whoLikedIt: this.props.author_id
+      });
+    else
+      this.props.socket.emit("do a dislike",{
+         _id: this.props.post._id,
+         whoLikedIt: this.props.author_id
+      });
   }
   render()
   {
@@ -81,23 +95,29 @@ class WrappedImage extends React.Component
           </div>
           <div className="tags wordwrap">
              {this.props.post.tags.map((d,i)=>
-               <span key={JSON.stringify(d)}>#{d.replace("_"," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
+             //change to replace all
+               <span key={JSON.stringify(d)}>#{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
              )}
           </div> 
-          
-            { this.props.author_id==this.props.post.author_id ?
-            <div className="row">
-              <div className="col-sm-6"><i className="fa fa-heart"/></div>
+           <div className="row">
+          <div className= {this.props.post.reactions.indexOf(this.props.author_id)==-1 && this.props.post.author_id != this.props.author_id ? "col-sm-6 heart" :
+                          this.props.post.reactions.indexOf(this.props.author_id)!=-1 
+                          && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 ? "col-sm-6 error" : "col-sm-6"}
+                onClick={this.doALike}>          
+                          {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}
+                          <i className="fa fa-heart"/></div>
+            { this.props.author_id!=this.props.post.author_id ?
+            
               <div className="col-sm-6"><i className="fa fa-exchange" /></div>
-            </div>
+ 
             :
-            <div className="row">
-              <div className="col-sm-12"><i className="fa fa-gear" 
-                       onClick={()=>this.props.grayOut(false,this.props.post)}                    />
-            </div></div>
+ 
+              <div className="col-sm-6"><i className="fa fa-gear" 
+                       onClick={()=>this.props.grayOut(false,this.props.post)}/></div>
+            
            }         
-
-        </div>  
+           </div>
+         </div>  
       </div>  
     );
   }
