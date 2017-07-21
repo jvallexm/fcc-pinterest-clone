@@ -21,7 +21,7 @@ export default class EditReaction extends React.Component
       this.setState({title: this.props.toEdit.name,
                      url: this.props.toEdit.link,
                      tags: this.props.toEdit.tags.join(",")})
-    }  
+    }
   }
   handleChange(e)
   {
@@ -95,7 +95,28 @@ export default class EditReaction extends React.Component
    if(newMessages.length>0)
      this.setState({messages: newMessages});
    else
-     this.setState({messages: ["All tests passed!"]});
+   {
+     if(this.props.isNew)
+     {
+       let today = new Date();
+       let newPost = {
+         _id: Math.floor(today.getTime()/1000),
+         link: this.state.url,
+         name: this.state.title,
+         tags: this.state.tags.toLowerCase().split(","),
+         author: this.props.author,
+         reactions: [],
+         author_id: this.props.author_id
+       };
+       console.log("Sending new post: " + JSON.stringify(newPost));
+       this.props.socket.emit("new post", {post: newPost, push_to: this.props.author_id});
+       this.props.closeOut();
+     }
+     else
+     {
+       this.setState({messages: "Do something else"});
+     }
+   }   
   }
   render()
   {

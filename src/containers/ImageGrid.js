@@ -47,7 +47,7 @@ export default class ImageGrid extends React.Component
     return(
       <div ref="grid" className="board">
         {this.props.images.map((d,i)=>
-          <WrappedImage post={d}
+          <WrappedImage key={JSON.stringify(d)} post={d} author_id={this.props.author_id}
             className={this.state.embiggened==i ? "front" : ""} 
             grayOut={this.props.grayOut}>
             <img className={this.state.embiggened==i ? "img-larg" : "img-smol"}
@@ -73,7 +73,7 @@ class WrappedImage extends React.Component
       <div className="post-wrapper">
        {this.props.children}
         <div className="text-left posted-by">
-        Posted by Whoever
+        Posted by {this.props.post.author}
         </div>  
         <div className="text-center container-fluid">
           <div className="pad-top cursive wordwrap">
@@ -81,15 +81,22 @@ class WrappedImage extends React.Component
           </div>
           <div className="tags wordwrap">
              {this.props.post.tags.map((d,i)=>
-               <span>#{d.replace("_"," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
+               <span key={JSON.stringify(d)}>#{d.replace("_"," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
              )}
           </div> 
-          <div className="row">
-            <div className="col-sm-4"><i className="fa fa-heart"/></div>
-            <div className="col-sm-4"><i className="fa fa-exchange" /></div>
-            <div className="col-sm-4"><i className="fa fa-gear" 
-                     onClick={()=>this.props.grayOut(true,this.props.post)}                    /></div>
-          </div>
+          
+            { this.props.author_id==this.props.post.author_id ?
+            <div className="row">
+              <div className="col-sm-6"><i className="fa fa-heart"/></div>
+              <div className="col-sm-6"><i className="fa fa-exchange" /></div>
+            </div>
+            :
+            <div className="row">
+              <div className="col-sm-12"><i className="fa fa-gear" 
+                       onClick={()=>this.props.grayOut(false,this.props.post)}                    />
+            </div></div>
+           }         
+
         </div>  
       </div>  
     );
