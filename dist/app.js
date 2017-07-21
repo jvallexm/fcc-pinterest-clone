@@ -16524,13 +16524,21 @@ var ImageGrid = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (ImageGrid.__proto__ || Object.getPrototypeOf(ImageGrid)).call(this, props));
 
     _this.state = {
-      embiggened: -1
+      embiggened: -1,
+      ticks: 0
     };
     _this.embiggen = _this.embiggen.bind(_this);
+    _this.tick = _this.tick.bind(_this);
     return _this;
   }
 
   _createClass(ImageGrid, [{
+    key: 'tick',
+    value: function tick() {
+      var newTicks = this.state.ticks + 1;
+      this.setState({ ticks: newTicks });
+    }
+  }, {
     key: 'embiggen',
     value: function embiggen(num) {
       if (this.state.embiggened != num) this.setState({ embiggened: num });else this.setState({ embiggened: -1 });
@@ -16560,6 +16568,7 @@ var ImageGrid = function (_React$Component) {
         this.masonry.reloadItems();
         this.masonry.layout();
       }
+      if (this.state.ticks == this.props.images.length & this.state.ticks > prevProps.ticks) console.log("they all loaded!");
     }
   }, {
     key: 'render',
@@ -16574,7 +16583,13 @@ var ImageGrid = function (_React$Component) {
             WrappedImage,
             { key: JSON.stringify(d), post: d, author_id: _this2.props.author_id, socket: _this2.props.socket,
               className: _this2.state.embiggened == i ? "front" : "",
-              grayOut: _this2.props.grayOut },
+              grayOut: _this2.props.grayOut,
+              embiggen: function embiggen() {
+                return _this2.embiggen(i);
+              },
+              thisOne: i,
+              whichOne: _this2.state.embiggened,
+              tick: _this2.tick },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { className: _this2.state.embiggened == i ? "img-larg" : "img-smol",
               onClick: function onClick() {
                 return _this2.embiggen(i);
@@ -16602,12 +16617,20 @@ var WrappedImage = function (_React$Component2) {
     var _this3 = _possibleConstructorReturn(this, (WrappedImage.__proto__ || Object.getPrototypeOf(WrappedImage)).call(this, props));
 
     _this3.doALike = _this3.doALike.bind(_this3);
+    _this3.loadItUp = _this3.loadItUp.bind(_this3);
     return _this3;
   }
 
   _createClass(WrappedImage, [{
+    key: 'loadItUp',
+    value: function loadItUp() {
+      this.props.tick();
+    }
+  }, {
     key: 'doALike',
     value: function doALike() {
+      if (this.props.post.author_id == this.props.author_id) return false;
+      if (this.props.author_id == undefined) return false;
       if (this.props.post.reactions.indexOf(this.props.author_id) == -1) this.props.socket.emit("do a like", {
         _id: this.props.post._id,
         whoLikedIt: this.props.author_id
@@ -16624,7 +16647,10 @@ var WrappedImage = function (_React$Component2) {
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
         { className: 'post-wrapper' },
-        this.props.children,
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: this.props.post.link,
+          className: this.props.whichOne == this.props.thisOne ? "img-larg" : "img-smol",
+          onClick: this.props.embiggen,
+          onLoad: this.loadItUp }),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
           { className: 'text-left posted-by' },
@@ -16633,15 +16659,15 @@ var WrappedImage = function (_React$Component2) {
         ),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
-          { className: 'text-center container-fluid' },
+          { className: 'text-center container-fluid pad-top' },
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
-            { className: 'pad-top cursive wordwrap' },
+            { className: this.props.whichOne == this.props.thisOne ? "cursive wordwrap" : "cursive wordwrap max-250" },
             this.props.post.name
           ),
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
-            { className: 'tags wordwrap' },
+            { className: this.props.whichOne == this.props.thisOne ? "tags wordwrap" : "tags wordwrap max-250" },
             this.props.post.tags.map(function (d, i) {
               return (
                 //change to replace all
@@ -16787,7 +16813,7 @@ var App = function (_React$Component) {
       });
       socket.on("post like", function (data) {
         var images = _this2.state.images;
-        console.log("Who liked it: " + data.whoLikedIt);
+        //console.log("Who liked it: " + data.whoLikedIt);
         for (var i = 0; i < images.length; i++) {
           if (images[i]._id == data._id) images[i].reactions.push(data.whoLikedIt);
         }
@@ -16864,6 +16890,11 @@ var App = function (_React$Component) {
               'h4',
               null,
               'A \'Pinterest-Style\' Board of Reactions'
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'h6',
+              null,
+              '(Click Images to Enlarge!)'
             )
           )
         ),

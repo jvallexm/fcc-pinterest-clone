@@ -6,9 +6,16 @@ export default class ImageGrid extends React.Component
   {
     super(props);
     this.state = {
-      embiggened: -1
+      embiggened: -1,
+      ticks: 0
     }
     this.embiggen = this.embiggen.bind(this);
+    this.tick = this.tick.bind(this);
+  }
+  tick()
+  {
+    let newTicks = this.state.ticks + 1;
+    this.setState({ticks: newTicks});
   }
   embiggen(num)
   {
@@ -40,6 +47,8 @@ export default class ImageGrid extends React.Component
       this.masonry.reloadItems();
       this.masonry.layout();
     }
+    if(this.state.ticks == this.props.images.length & this.state.ticks > prevProps.ticks )
+      console.log("they all loaded!");
   }
 
   render()
@@ -49,7 +58,11 @@ export default class ImageGrid extends React.Component
         {this.props.images.map((d,i)=>
           <WrappedImage key={JSON.stringify(d)} post={d} author_id={this.props.author_id} socket={this.props.socket}
             className={this.state.embiggened==i ? "front" : ""} 
-            grayOut={this.props.grayOut}>
+            grayOut={this.props.grayOut}
+            embiggen={()=>this.embiggen(i)}
+            thisOne = {i}
+            whichOne = {this.state.embiggened}
+            tick={this.tick}>
             <img className={this.state.embiggened==i ? "img-larg" : "img-smol"}
                  onClick={()=>this.embiggen(i)}
                  src={d.link}
@@ -57,7 +70,7 @@ export default class ImageGrid extends React.Component
           </WrappedImage>                       
         )}
       </div>
-    )
+    );
   }
 }
 
@@ -67,9 +80,18 @@ class WrappedImage extends React.Component
   {
     super(props);
     this.doALike = this.doALike.bind(this);
+    this.loadItUp = this.loadItUp.bind(this);
+  }
+  loadItUp()
+  {
+    this.props.tick();
   }
   doALike()
   {
+    if(this.props.post.author_id == this.props.author_id)
+      return false;
+    if(this.props.author_id == undefined)
+      return false;
     if(this.props.post.reactions.indexOf(this.props.author_id)==-1)
       this.props.socket.emit("do a like",{
          _id: this.props.post._id,
@@ -85,15 +107,19 @@ class WrappedImage extends React.Component
   {
     return(
       <div className="post-wrapper">
-       {this.props.children}
+       <img src={this.props.post.link} 
+            className={this.props.whichOne == this.props.thisOne ? "img-larg" : "img-smol"} 
+            onClick={this.props.embiggen}
+            onLoad={this.loadItUp}/>
+       {/*this.props.children*/}
         <div className="text-left posted-by">
         Posted by {this.props.post.author}
         </div>  
-        <div className="text-center container-fluid">
-          <div className="pad-top cursive wordwrap">
+        <div className="text-center container-fluid pad-top">
+          <div className={this.props.whichOne == this.props.thisOne ? "cursive wordwrap" :"cursive wordwrap max-250"}>
             {this.props.post.name}
           </div>
-          <div className="tags wordwrap">
+          <div className={this.props.whichOne == this.props.thisOne ? "tags wordwrap" :"tags wordwrap max-250"}>
              {this.props.post.tags.map((d,i)=>
              //change to replace all
                <span key={JSON.stringify(d)}>#{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            

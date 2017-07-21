@@ -18,14 +18,14 @@ body
 .img-smol
 {
   border-radius: 5px;
-  max-width: 300px;
+  max-width: 250px;
   max-height: 250px;
   position: relative;
 }
 .img-larg
 {
   border-radius: 5px;
-  max-width: 600px;
+  max-width: 500px;
   max-height: 500px;
   position: relative;
 }
@@ -58,7 +58,6 @@ body
 .cursive
 {
   font-family: "Francois One";
-  max-width: 300px;   
 }
 /* Source: http://snipplr.com/view/10979/css-cross-browser-word-wrap */
 .wordwrap { 
@@ -148,4 +147,12 @@ input
 .heart:hover
 {
   color: red;
+}
+.loaded
+{
+  max-width: 320px;
+}
+.max-250
+{
+  max-width: 250px;
 }

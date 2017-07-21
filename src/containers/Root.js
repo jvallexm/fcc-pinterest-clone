@@ -57,7 +57,7 @@ export default class App extends React.Component
     });
     socket.on("post like",(data)=>{
       let images = this.state.images;
-      console.log("Who liked it: " + data.whoLikedIt);
+      //console.log("Who liked it: " + data.whoLikedIt);
       for(var i=0;i<images.length;i++)
       {
         if(images[i]._id == data._id)
@@ -116,7 +116,8 @@ export default class App extends React.Component
         <center>
           <div className="head padding-10 max-500"> 
             <h1>React Board</h1>
-            <h4>A 'Pinterest-Style' Board of Reactions</h4> 
+            <h4>A 'Pinterest-Style' Board of Reactions</h4>
+            <h6>(Click Images to Enlarge!)</h6>
           </div>  
         </center>  
 

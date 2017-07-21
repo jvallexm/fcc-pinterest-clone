@@ -107,10 +107,86 @@ io.on('connection', (socket) => {
    });
    
    socket.on("do a like",(data)=>{
+      console.log("doing a like");
       socket.emit("post like", {
          _id: data._id,
          whoLikedIt: data.whoLikedIt
       }); 
+      MongoClient.connect(url,(err,db)=>{
+        if(err)
+         console.log(err);
+        else
+        {
+           console.log("posting a like to database");
+           var posts = db.collection('posts');
+           var doLike = ()=>{
+               posts.update({_id: data._id},{$push: {reactions: data.whoLikedIt}});
+           }
+           doLike(db,()=>{db.close();});
+        }
+      });
+   });
+   
+   socket.on("do a dislike",(data)=>{
+      console.log("doing a dislike");
+      socket.emit("post dislike", {
+         _id: data._id,
+         whoLikedIt: data.whoLikedIt
+      }); 
+      MongoClient.connect(url,(err,db)=>{
+        if(err)
+         console.log(err);
+        else
+        {
+           var posts = db.collection('posts');
+           var doLike = ()=>{
+               posts.update({_id: data._id},{$pull: {reactions: data.whoLikedIt}});
+           }
+           doLike(db,()=>{db.close();});
+        }
+      });
+   });
+   
+   socket.on("do a reblog",(data)=>{
+      console.log("doing a reblog");
+      socket.emit("post reblog", {
+         _id: data._id,
+         whoLikedIt: data.whoLikedIt
+      });
+      MongoClient.connect(url, (err,db)=>{
+         if(err)
+          console.log(err);
+         else
+         {
+           var users = db.collection('users');
+           var reblog = ()=>{
+             users.update({_id: data.whoLikedIt},{$push: {posts: data._id}})  
+           };
+           reblog(db,()=>{db.close();});
+         }
+         
+      });
+   });
+   
+   socket.on("undo a reblog",(data)=>{
+      console.log("undoing a reblog");
+      socket.emit("post undo reblog", {
+         _id: data._id,
+         whoLikedIt: data.whoLikedIt
+      });
+      MongoClient.connect(url, (err,db)=>{
+         if(err)
+          console.log(err);
+         else
+         {
+           var users = db.collection('users');
+           var reblog = ()=>{
+             users.update({_id: data.whoLikedIt},{$pull: {posts: data._id}})  
+           };
+           reblog(db,()=>{db.close();});
+         }
+         
+      });
    });
    
 //below from https://www.codementor.io/chrisharrington/how-to-implement-twitter-sign-expressjs-oauth-du107vbhy
