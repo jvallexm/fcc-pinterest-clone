@@ -20,16 +20,21 @@ export default class App extends React.Component
       count: 0,
       grayOut: false,
       isNew: false,
-      toEdit: undefined
+      toEdit: undefined,
+      loggedIn: false,
+      userData: undefined
     }
     this.grayOut = this.grayOut.bind(this);
     this.closeOut = this.closeOut.bind(this);
   }
   componentWillMount()
   {
-    socket.on("datas",()=>{
-      console.log("literally anything");
-    }); 
+    socket.on("datas",(data)=>{
+      socket.emit("get user data", data);
+    });
+    socket.on("send user data",(data)=>{
+      this.setState({loggedIn: true});
+    });
   }
   closeOut()
   {
@@ -62,16 +67,22 @@ export default class App extends React.Component
         <div className="text-center container-fluid">
           <div className="row">  
             <div className="col-md-2 middle-text cursive text-right" id={"nav-bar"}>
-              <button className="btn well"
+            {this.state.loggedIn
+            ? <button className="btn well"
+                      onClick={()=>this.grayOut(false,undefined)}>
+                <i className="fa fa-plus"/> Add a New Reaction
+              </button>  
+            : ""
+            }
+            {this.state.loggedIn    
+            ? <button className="btn well">My Reactions <i className="fa fa-user"/></button> 
+                          
+            : <button className="btn well"
                       onClick={()=>window.open('/request-token')}>
                 Login With Twitter <i className="fa fa-twitter" />
               </button>
-              <button className="btn well"
-                      onClick={()=>this.grayOut(false,undefined)}>
-                <i className="fa fa-plus"/> Add a New Reaction
-              </button>
+            }  
               <button className="btn well">What's New? <i className="fa fa-flash"/></button>
-              <button className="btn well">My Reactions <i className="fa fa-user"/></button>
               <button className="btn well">Favorites <i className="fa fa-heart"/></button>
               <button className="btn well">Search <i className="fa fa-search"/></button>
             </div>  

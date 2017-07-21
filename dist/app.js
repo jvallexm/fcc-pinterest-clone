@@ -16704,7 +16704,9 @@ var App = function (_React$Component) {
       count: 0,
       grayOut: false,
       isNew: false,
-      toEdit: undefined
+      toEdit: undefined,
+      loggedIn: false,
+      userData: undefined
     };
     _this.grayOut = _this.grayOut.bind(_this);
     _this.closeOut = _this.closeOut.bind(_this);
@@ -16714,8 +16716,13 @@ var App = function (_React$Component) {
   _createClass(App, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      socket.on("datas", function () {
-        console.log("literally anything");
+      var _this2 = this;
+
+      socket.on("datas", function (data) {
+        socket.emit("get user data", data);
+      });
+      socket.on("send user data", function (data) {
+        _this2.setState({ loggedIn: true });
       });
     }
   }, {
@@ -16731,7 +16738,7 @@ var App = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
@@ -16774,7 +16781,21 @@ var App = function (_React$Component) {
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
               { className: 'col-md-2 middle-text cursive text-right', id: "nav-bar" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              this.state.loggedIn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'button',
+                { className: 'btn well',
+                  onClick: function onClick() {
+                    return _this3.grayOut(false, undefined);
+                  } },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-plus' }),
+                ' Add a New Reaction'
+              ) : "",
+              this.state.loggedIn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'button',
+                { className: 'btn well' },
+                'My Reactions ',
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-user' })
+              ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'button',
                 { className: 'btn well',
                   onClick: function onClick() {
@@ -16785,24 +16806,9 @@ var App = function (_React$Component) {
               ),
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'button',
-                { className: 'btn well',
-                  onClick: function onClick() {
-                    return _this2.grayOut(false, undefined);
-                  } },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-plus' }),
-                ' Add a New Reaction'
-              ),
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'button',
                 { className: 'btn well' },
                 'What\'s New? ',
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-flash' })
-              ),
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'button',
-                { className: 'btn well' },
-                'My Reactions ',
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-user' })
               ),
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'button',
