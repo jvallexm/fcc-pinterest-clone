@@ -16385,7 +16385,7 @@ var EditReaction = function (_React$Component) {
           "div",
           { className: "head padding-10" },
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "h1",
+            "h2",
             null,
             this.props.toEdit == undefined ? "Add a New Reaction!" : "Edit Your Reaction!"
           )
@@ -16563,6 +16563,7 @@ var ImageGrid = function (_React$Component) {
       if (this.props.images.length != prevProps.images.length) {
         this.masonry.reloadItems();
         this.masonry.layout();
+        this.setState({ embiggened: -1 });
       }
       //above from https://codepen.io/Shorina/pen/ggYvPL    
       if (this.state.embiggened != prevProps.embiggened) {
@@ -16663,6 +16664,7 @@ var WrappedImage = function (_React$Component2) {
     key: 'doAReblog',
     value: function doAReblog() {
       if (this.props.author_id == "12") return false;
+      if (this.props.author_id == this.props.post.author_id) return false;
       if (this.props.post.reblogs.indexOf(this.props.author_id) == -1) this.props.socket.emit("do a reblog", {
         _id: this.props.post._id,
         whoLikedIt: this.props.author_id
@@ -16715,7 +16717,8 @@ var WrappedImage = function (_React$Component2) {
                     onClick: function onClick() {
                       return _this4.props.showByTag(d);
                     } },
-                  '#',
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-tags' }),
+                  ' #',
                   d.replace(/_/g, " "),
                   i < _this4.props.post.tags.length - 1 ? " " : ""
                 )
@@ -16727,24 +16730,36 @@ var WrappedImage = function (_React$Component2) {
             { className: 'row' },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
-              { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "col-sm-6 heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0 ? "col-sm-6 error" : "col-sm-6",
-                onClick: this.doALike },
-              this.props.post.reactions.length > 0 ? this.props.post.reactions.length + " " : "",
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' }),
-              ' '
+              { className: this.props.post.author_id == this.props.author_id ? "col-sm-3" : "col-sm-4" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'span',
+                { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0 ? "error" : "" },
+                this.props.post.reactions.length > 0 ? this.props.post.reactions.length + " " : "",
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' })
+              )
             ),
-            this.props.author_id != this.props.post.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
-              { className: this.props.post.reblogs.indexOf(this.props.author_id) == -1 || this.props.post.reblogs == undefined ? "reblog col-sm-6" : "reblogged col-sm-6" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange',
-                onClick: this.doAReblog })
-            ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              { className: this.props.post.author_id == this.props.author_id ? "col-sm-3" : "col-sm-4" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'span',
+                { className: this.props.post.reblogs.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "reblog" : this.props.post.reblogs.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reblogs.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reblogs.length > 0 ? "reblogged" : "" },
+                this.props.post.reblogs.length > 0 ? this.props.post.reblogs.length + " " : "",
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange',
+                  onClick: this.doAReblog })
+              )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
-              { className: 'col-sm-6' },
-              ' ',
+              { className: this.props.post.author_id == this.props.author_id ? "col-sm-3" : "col-sm-4" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-comments' })
+            ),
+            this.props.post.author_id == this.props.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'col-sm-3' },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-gear',
                 onClick: this.showOptions })
-            )
+            ) : ""
           ) : !this.state.delete ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
             { className: 'row' },

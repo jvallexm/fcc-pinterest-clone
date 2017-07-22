@@ -40,6 +40,7 @@ export default class ImageGrid extends React.Component
      if(this.props.images.length != prevProps.images.length){
       this.masonry.reloadItems();
       this.masonry.layout();
+      this.setState({embiggened: -1});
     }
   //above from https://codepen.io/Shorina/pen/ggYvPL    
     if(this.state.embiggened != prevProps.embiggened)
@@ -130,6 +131,8 @@ class WrappedImage extends React.Component
   {
     if(this.props.author_id == "12")
       return false;
+    if(this.props.author_id == this.props.post.author_id)  
+      return false;
     if(this.props.post.reblogs.indexOf(this.props.author_id)==-1)
       this.props.socket.emit("do a reblog",{
          _id: this.props.post._id,
@@ -161,37 +164,51 @@ class WrappedImage extends React.Component
              {this.props.post.tags.map((d,i)=>
              //change to replace all
                <span key={JSON.stringify(d)}
-                     onClick={()=>this.props.showByTag(d)}>#{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
+                     onClick={()=>this.props.showByTag(d)}>
+                     <i className="fa fa-tags" /> #{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}
+               </span>            
              )}
-          </div> 
+          </div>
           {!this.state.options && !this.state.delete ?
           <div className="row">
-          <div className= {    this.props.post.reactions.indexOf(this.props.author_id)==-1 
-                            && this.props.post.author_id != this.props.author_id 
-                            ? "col-sm-6 heart" :
-                          (this.props.post.reactions.indexOf(this.props.author_id)!=-1 
-                          && this.props.post.author_id != this.props.author_id 
-                          && this.props.post.reactions.length > 0)
-                          || (this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0) ? "col-sm-6 error" : "col-sm-6"}
-                onClick={this.doALike}>          
-                          {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}
-                          <i className="fa fa-heart"/> </div>
-            { this.props.author_id!=this.props.post.author_id ?
-            
-              <div className={this.props.post.reblogs.indexOf(this.props.author_id)==-1||this.props.post.reblogs == undefined
-                              ? "reblog col-sm-6" 
-                              : "reblogged col-sm-6"
-              }>
-                 <i className="fa fa-exchange"
-                    onClick={this.doAReblog} />
+              <div className={this.props.post.author_id==this.props.author_id ? "col-sm-3" : "col-sm-4"}>
+                  <span className={      this.props.post.reactions.indexOf(this.props.author_id)==-1 
+                                      && this.props.post.author_id != this.props.author_id 
+                                       ? "heart" 
+                                         : (  this.props.post.reactions.indexOf(this.props.author_id)!=-1
+                                           && this.props.post.author_id != this.props.author_id 
+                                           && this.props.post.reactions.length > 0)
+                                       ||  (this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0)
+                                       ? "error"
+                                       : ""}>
+                      {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}<i className="fa fa-heart"/>
+                  </span> 
               </div>
- 
-            :
-              <div className="col-sm-6"> <i className="fa fa-gear" 
-                       onClick={this.showOptions}/></div>
-            
-           }         
-           </div>
+              <div className={this.props.post.author_id==this.props.author_id ? "col-sm-3" : "col-sm-4"}>
+                 <span className={      this.props.post.reblogs.indexOf(this.props.author_id)==-1 
+                                      && this.props.post.author_id != this.props.author_id 
+                                       ? "reblog" 
+                                         : (  this.props.post.reblogs.indexOf(this.props.author_id)!=-1
+                                           && this.props.post.author_id != this.props.author_id 
+                                           && this.props.post.reblogs.length > 0)
+                                       ||  (this.props.post.author_id == this.props.author_id && this.props.post.reblogs.length > 0)
+                                       ? "reblogged"
+                                       : ""}>
+                      {this.props.post.reblogs.length>0 ? this.props.post.reblogs.length + " " : ""}<i className="fa fa-exchange"
+                                                                                                       onClick={this.doAReblog}/>
+                  </span>
+              </div>
+              <div className={this.props.post.author_id==this.props.author_id ? "col-sm-3" : "col-sm-4"}>
+                  <i className="fa fa-comments" />
+              </div>
+              {this.props.post.author_id==this.props.author_id ?
+              <div className="col-sm-3">
+                  <i className="fa fa-gear" 
+                     onClick={this.showOptions}/>
+              </div> : ""}
+          </div>
+          
+          
            : !this.state.delete   
            ?  <div className = "row">
              <div className="col-sm-4" onClick={this.showOptions}><i className="fa fa-arrow-left"/> Back</div>

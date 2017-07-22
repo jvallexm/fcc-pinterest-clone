@@ -124,7 +124,7 @@ export default class EditReaction extends React.Component
     return(
       <div className="post-wrapper cursive text-center container-fluid" id={"edit"}>
         <div className="head padding-10">
-        <h1>{this.props.toEdit == undefined ? "Add a New Reaction!" : "Edit Your Reaction!"}</h1></div>
+        <h2>{this.props.toEdit == undefined ? "Add a New Reaction!" : "Edit Your Reaction!"}</h2></div>
        <div className="padding-10"> 
         <div className="padding-bottom">
           {this.state.messages.map((d,i)=>
