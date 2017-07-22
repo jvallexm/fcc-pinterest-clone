@@ -111,7 +111,7 @@ body
 {
   max-width: 500px;
   margin: 10px;
-   margin-top: 20px;
+  margin-top: 20px;
 }
 input
 {
@@ -154,5 +154,13 @@ input
 }
 .max-250
 {
-  max-width: 250px;
+  max-width: 270px;
+}
+bold:
+{
+  font-weight: bold;
+}
+i
+{
+  padding-top: 5px;
 }

@@ -55,7 +55,20 @@ export default class App extends React.Component
         else
          return 1;
       });
-      this.setState({images: sortedPosts});
+      let old_specials = this.state.special_images;
+      let special_images = [];
+      for(var i=0;i<old_specials.length;i++)
+      {
+        let postCheck = false;
+        for(var j=0;j<sortedPosts.length;j++)
+        {
+          if(sortedPosts[j]._id == old_specials[i]._id)
+           postCheck = true;
+        }
+        if(postCheck)
+          special_images.push(old_specials[i]);
+      }
+      this.setState({images: sortedPosts, special_images: special_images});
     });
     socket.on("post like",(data)=>{
       let images = this.state.images;
@@ -156,7 +169,6 @@ export default class App extends React.Component
           <div className="head padding-10 max-500"> 
             <h1>React Board</h1>
             <h4>A 'Pinterest-Style' Board of Reactions</h4>
-            <h6>(Click Images to Enlarge!)</h6>
           </div>  
         </center>  
 

@@ -16370,7 +16370,7 @@ var EditReaction = function (_React$Component) {
           this.props.socket.emit("new post", { post: newPost, push_to: this.props.author_id });
           this.props.closeOut();
         } else {
-          this.setState({ messages: "Do something else" });
+          this.setState({ messages: ["Do something else"] });
         }
       }
     }
@@ -16609,12 +16609,37 @@ var WrappedImage = function (_React$Component2) {
 
     var _this3 = _possibleConstructorReturn(this, (WrappedImage.__proto__ || Object.getPrototypeOf(WrappedImage)).call(this, props));
 
+    _this3.state = {
+      options: false,
+      delete: false,
+      deleting: false
+    };
     _this3.doALike = _this3.doALike.bind(_this3);
     _this3.loadItUp = _this3.loadItUp.bind(_this3);
+    _this3.showOptions = _this3.showOptions.bind(_this3);
+    _this3.showDelete = _this3.showDelete.bind(_this3);
+    _this3.deleteOne = _this3.deleteOne.bind(_this3);
     return _this3;
   }
 
   _createClass(WrappedImage, [{
+    key: 'deleteOne',
+    value: function deleteOne(obj) {
+      console.log("Deleting: " + JSON.stringify(obj));
+      this.props.socket.emit("delete one", { _id: obj._id });
+      this.setState({ deleting: true });
+    }
+  }, {
+    key: 'showDelete',
+    value: function showDelete() {
+      this.setState({ delete: !this.state.delete });
+    }
+  }, {
+    key: 'showOptions',
+    value: function showOptions() {
+      this.setState({ options: !this.state.options });
+    }
+  }, {
     key: 'loadItUp',
     value: function loadItUp() {
       this.props.tick();
@@ -16639,7 +16664,7 @@ var WrappedImage = function (_React$Component2) {
 
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { className: 'post-wrapper' },
+        { className: this.props.whichOne == this.props.thisOne ? "post-wrapper" : "post-wrapper max-250" },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: this.props.post.link,
           className: this.props.whichOne == this.props.thisOne ? "img-larg" : "img-smol",
           onClick: this.props.embiggen,
@@ -16661,12 +16686,12 @@ var WrappedImage = function (_React$Component2) {
           { className: 'text-center container-fluid pad-top' },
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
-            { className: this.props.whichOne == this.props.thisOne ? "cursive wordwrap" : "cursive wordwrap max-250" },
+            { className: this.props.whichOne == this.props.thisOne ? "cursive wordwrap" : "cursive wordwrap" },
             this.props.post.name
           ),
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
-            { className: this.props.whichOne == this.props.thisOne ? "tags wordwrap" : "tags wordwrap max-250" },
+            { className: this.props.whichOne == this.props.thisOne ? "tags wordwrap" : "tags wordwrap" },
             this.props.post.tags.map(function (d, i) {
               return (
                 //change to replace all
@@ -16683,7 +16708,7 @@ var WrappedImage = function (_React$Component2) {
               );
             })
           ),
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          !this.state.options && !this.state.delete ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
             { className: 'row' },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -16691,19 +16716,76 @@ var WrappedImage = function (_React$Component2) {
               { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "col-sm-6 heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0 ? "col-sm-6 error" : "col-sm-6",
                 onClick: this.doALike },
               this.props.post.reactions.length > 0 ? this.props.post.reactions.length + " " : "",
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' })
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' }),
+              ' '
             ),
             this.props.author_id != this.props.post.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
               { className: 'col-sm-6' },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange' })
+              ' ',
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange' }),
+              ' '
             ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
               { className: 'col-sm-6' },
+              ' ',
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-gear',
-                onClick: function onClick() {
-                  return _this4.props.grayOut(false, _this4.props.post);
-                } })
+                onClick: this.showOptions })
+            )
+          ) : !this.state.delete ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            { className: 'row' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'col-sm-4', onClick: this.showOptions },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-arrow-left' }),
+              ' Back'
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'col-sm-4' },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'span',
+                { onClick: function onClick() {
+                    return _this4.props.grayOut(false, _this4.props.post);
+                  } },
+                'Edit ',
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-gears' })
+              )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'col-sm-4 error' },
+              ' ',
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-trash',
+                onClick: this.showDelete }),
+              ' '
+            )
+          ) : !this.state.deleting ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            { className: 'row' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'col-sm-4', onClick: this.showDelete },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-arrow-left' }),
+              ' Back'
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'col-sm-8 error bold', onClick: function onClick() {
+                  return _this4.deleteOne(_this4.props.post);
+                } },
+              'Yes, Delete Forever'
+            )
+          ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            { className: 'row' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'col-sm-12' },
+              'Goodbye! We\'ll Miss You! ',
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-spinner fa-spin' }),
+              ' '
             )
           )
         )
@@ -16813,7 +16895,16 @@ var App = function (_React$Component) {
         var sortedPosts = data.posts.sort(function (a, b) {
           if (a._id > b._id) return -1;else return 1;
         });
-        _this2.setState({ images: sortedPosts });
+        var old_specials = _this2.state.special_images;
+        var special_images = [];
+        for (var i = 0; i < old_specials.length; i++) {
+          var postCheck = false;
+          for (var j = 0; j < sortedPosts.length; j++) {
+            if (sortedPosts[j]._id == old_specials[i]._id) postCheck = true;
+          }
+          if (postCheck) special_images.push(old_specials[i]);
+        }
+        _this2.setState({ images: sortedPosts, special_images: special_images });
       });
       socket.on("post like", function (data) {
         var images = _this2.state.images;
@@ -16925,11 +17016,6 @@ var App = function (_React$Component) {
               'h4',
               null,
               'A \'Pinterest-Style\' Board of Reactions'
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              'h6',
-              null,
-              '(Click Images to Enlarge!)'
             )
           )
         ),

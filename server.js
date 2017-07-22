@@ -147,45 +147,20 @@ io.on('connection', (socket) => {
       });
    });
    
-   socket.on("do a reblog",(data)=>{
-      console.log("doing a reblog");
-      socket.emit("post reblog", {
-         _id: data._id,
-         whoLikedIt: data.whoLikedIt
-      });
-      MongoClient.connect(url, (err,db)=>{
-         if(err)
-          console.log(err);
-         else
-         {
-           var users = db.collection('users');
-           var reblog = ()=>{
-             users.update({_id: data.whoLikedIt},{$push: {posts: data._id}})  
-           };
-           reblog(db,()=>{db.close();});
-         }
-         
-      });
-   });
-   
-   socket.on("undo a reblog",(data)=>{
-      console.log("undoing a reblog");
-      socket.emit("post undo reblog", {
-         _id: data._id,
-         whoLikedIt: data.whoLikedIt
-      });
-      MongoClient.connect(url, (err,db)=>{
-         if(err)
-          console.log(err);
-         else
-         {
-           var users = db.collection('users');
-           var reblog = ()=>{
-             users.update({_id: data.whoLikedIt},{$pull: {post: data._id}})  
-           };
-           reblog(db,()=>{db.close();});
-         }
-         
+   socket.on("delete one",(data)=>{
+      console.log("Deleting a post");
+            MongoClient.connect(url,(err,db)=>{
+        if(err)
+         console.log(err);
+        else
+        {
+           var posts = db.collection('posts');
+           var doDelete = ()=>{
+               posts.remove({_id: data._id});
+               io.sockets.emit("force post update",{force: "post"});
+           }
+           doDelete(db,()=>{db.close();});
+        }
       });
    });
    

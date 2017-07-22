@@ -114,7 +114,7 @@ export default class EditReaction extends React.Component
      }
      else
      {
-       this.setState({messages: "Do something else"});
+       this.setState({messages: ["Do something else"]});
      }
    }   
   }

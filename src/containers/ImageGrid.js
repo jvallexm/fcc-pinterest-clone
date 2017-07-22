@@ -79,8 +79,30 @@ class WrappedImage extends React.Component
   constructor(props)
   {
     super(props);
+    this.state = {
+      options: false,
+      delete: false,
+      deleting: false
+    };
     this.doALike = this.doALike.bind(this);
     this.loadItUp = this.loadItUp.bind(this);
+    this.showOptions = this.showOptions.bind(this);
+    this.showDelete = this.showDelete.bind(this);
+    this.deleteOne = this.deleteOne.bind(this);
+  }
+  deleteOne(obj)
+  {
+    console.log("Deleting: " + JSON.stringify(obj))
+    this.props.socket.emit("delete one", {_id: obj._id});
+    this.setState({deleting: true});
+  }
+  showDelete()
+  {
+    this.setState({delete: !this.state.delete}); 
+  }
+  showOptions()
+  {
+    this.setState({options: !this.state.options});
   }
   loadItUp()
   {
@@ -106,7 +128,7 @@ class WrappedImage extends React.Component
   render()
   {
     return(
-      <div className="post-wrapper">
+      <div className={this.props.whichOne == this.props.thisOne ? "post-wrapper" : "post-wrapper max-250"}>
        <img src={this.props.post.link} 
             className={this.props.whichOne == this.props.thisOne ? "img-larg" : "img-smol"} 
             onClick={this.props.embiggen}
@@ -116,17 +138,18 @@ class WrappedImage extends React.Component
           <span onClick={()=>this.props.showById(this.props.post.author_id)}>Posted by {this.props.post.author}</span>
         </div>  
         <div className="text-center container-fluid pad-top">
-          <div className={this.props.whichOne == this.props.thisOne ? "cursive wordwrap" :"cursive wordwrap max-250"}>
+          <div className={this.props.whichOne == this.props.thisOne ? "cursive wordwrap" :"cursive wordwrap"}>
             {this.props.post.name}
           </div>
-          <div className={this.props.whichOne == this.props.thisOne ? "tags wordwrap" :"tags wordwrap max-250"}>
+          <div className={this.props.whichOne == this.props.thisOne ? "tags wordwrap" :"tags wordwrap"}>
              {this.props.post.tags.map((d,i)=>
              //change to replace all
                <span key={JSON.stringify(d)}
                      onClick={()=>this.props.showByTag(d)}>#{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}</span>            
              )}
           </div> 
-           <div className="row">
+          {!this.state.options && !this.state.delete ?
+          <div className="row">
           <div className= {    this.props.post.reactions.indexOf(this.props.author_id)==-1 
                             && this.props.post.author_id != this.props.author_id 
                             ? "col-sm-6 heart" :
@@ -136,18 +159,38 @@ class WrappedImage extends React.Component
                           || (this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0) ? "col-sm-6 error" : "col-sm-6"}
                 onClick={this.doALike}>          
                           {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}
-                          <i className="fa fa-heart"/></div>
+                          <i className="fa fa-heart"/> </div>
             { this.props.author_id!=this.props.post.author_id ?
             
-              <div className="col-sm-6"><i className="fa fa-exchange" /></div>
+              <div className="col-sm-6"> <i className="fa fa-exchange" /> </div>
  
             :
  
-              <div className="col-sm-6"><i className="fa fa-gear" 
-                       onClick={()=>this.props.grayOut(false,this.props.post)}/></div>
+              <div className="col-sm-6"> <i className="fa fa-gear" 
+                       onClick={this.showOptions}/></div>
             
            }         
            </div>
+           : !this.state.delete   
+           ?  <div className = "row">
+             <div className="col-sm-4" onClick={this.showOptions}><i className="fa fa-arrow-left"/> Back</div>
+             <div className="col-sm-4"><span onClick={()=>this.props.grayOut(false,this.props.post)}>
+                 Edit <i className="fa fa-gears"/></span></div>
+             <div className="col-sm-4 error"> <i className="fa fa-trash" 
+                                                onClick={this.showDelete}/> </div>     
+           
+           </div>
+           :!this.state.deleting ? <div className = "row">
+           
+               <div className="col-sm-4" onClick={this.showDelete} ><i className="fa fa-arrow-left"/> Back</div>
+               <div className="col-sm-8 error bold" onClick={()=>this.deleteOne(this.props.post)}>Yes, Delete Forever</div>
+               
+             </div>
+            
+          : <div className="row">
+               <div className="col-sm-12">
+                  Goodbye! We'll Miss You! <i className="fa fa-spinner fa-spin" /> </div>
+            </div>}
          </div>  
       </div>  
     );
