@@ -16364,7 +16364,8 @@ var EditReaction = function (_React$Component) {
             tags: this.state.tags.toLowerCase().split(","),
             author: this.props.author,
             reactions: [],
-            author_id: this.props.author_id
+            author_id: this.props.author_id,
+            reblogs: []
           };
           console.log("Sending new post: " + JSON.stringify(newPost));
           this.props.socket.emit("new post", { post: newPost, push_to: this.props.author_id });
@@ -16619,6 +16620,7 @@ var WrappedImage = function (_React$Component2) {
     _this3.showOptions = _this3.showOptions.bind(_this3);
     _this3.showDelete = _this3.showDelete.bind(_this3);
     _this3.deleteOne = _this3.deleteOne.bind(_this3);
+    _this3.doAReblog = _this3.doAReblog.bind(_this3);
     return _this3;
   }
 
@@ -16653,6 +16655,18 @@ var WrappedImage = function (_React$Component2) {
         _id: this.props.post._id,
         whoLikedIt: this.props.author_id
       });else this.props.socket.emit("do a dislike", {
+        _id: this.props.post._id,
+        whoLikedIt: this.props.author_id
+      });
+    }
+  }, {
+    key: 'doAReblog',
+    value: function doAReblog() {
+      if (this.props.author_id == "12") return false;
+      if (this.props.post.reblogs.indexOf(this.props.author_id) == -1) this.props.socket.emit("do a reblog", {
+        _id: this.props.post._id,
+        whoLikedIt: this.props.author_id
+      });else this.props.socket.emit("undo a reblog", {
         _id: this.props.post._id,
         whoLikedIt: this.props.author_id
       });
@@ -16721,10 +16735,9 @@ var WrappedImage = function (_React$Component2) {
             ),
             this.props.author_id != this.props.post.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
-              { className: 'col-sm-6' },
-              ' ',
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange' }),
-              ' '
+              { className: this.props.post.reblogs.indexOf(this.props.author_id) == -1 || this.props.post.reblogs == undefined ? "reblog col-sm-6" : "reblogged col-sm-6" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange',
+                onClick: this.doAReblog })
             ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
               { className: 'col-sm-6' },
@@ -16856,7 +16869,9 @@ var App = function (_React$Component) {
       loggedIn: false,
       userData: undefined,
       showSpecial: false,
-      special_images: []
+      special_images: [],
+      special: undefined,
+      searchId: undefined
     };
     _this.grayOut = _this.grayOut.bind(_this);
     _this.closeOut = _this.closeOut.bind(_this);
@@ -16895,16 +16910,24 @@ var App = function (_React$Component) {
         var sortedPosts = data.posts.sort(function (a, b) {
           if (a._id > b._id) return -1;else return 1;
         });
-        var old_specials = _this2.state.special_images;
-        var special_images = [];
-        for (var i = 0; i < old_specials.length; i++) {
-          var postCheck = false;
-          for (var j = 0; j < sortedPosts.length; j++) {
-            if (sortedPosts[j]._id == old_specials[i]._id) postCheck = true;
+        var special_images = _this2.state.special_images;
+        var newImages = [];
+        var idCheck = false;
+        if (_this2.state.special == "id") {
+          console.log("checking id");
+          idCheck = true;
+          for (var i = 0; i < sortedPosts.length; i++) {
+            if (sortedPosts[i].author_id == _this2.state.searchId || sortedPosts[i].reblogs.indexOf(_this2.state.searchId) > -1) newImages.push(sortedPosts[i]);
           }
-          if (postCheck) special_images.push(old_specials[i]);
         }
-        _this2.setState({ images: sortedPosts, special_images: special_images });
+        if (_this2.state.special == "tag") {
+          idCheck = true;
+          console.log("checking tags");
+          for (var j = 0; j < sortedPosts.length; j++) {
+            if (sortedPosts[j].tags.indexOf(_this2.state.searchId) > -1) newImages.push(sortedPosts[j]);
+          }
+        }
+        if (newImages.length == 0 && !idCheck) _this2.setState({ images: sortedPosts });else _this2.setState({ images: sortedPosts, special_images: newImages });
       });
       socket.on("post like", function (data) {
         var images = _this2.state.images;
@@ -16925,7 +16948,48 @@ var App = function (_React$Component) {
             images[i].reactions = reactions;
           }
         }
+        var newImages = [];
+        var special_images = _this2.state.special_images;
+        var likeCheck = false;
+        if (_this2.state.special == "liked") {
+          likeCheck = true;
+          for (var m = 0; m < special_images.length; m++) {
+            if (special_images[m].reactions.indexOf(_this2.state.userData._id) != -1) {
+              newImages.push(images[m]);
+            }
+          }
+        }
+        if (newImages.length == 0 && !likeCheck) _this2.setState({ images: images });else _this2.setState({ images: images, special_images: newImages });
+      });
+      socket.on("post reblog", function (data) {
+        var images = _this2.state.images;
+        //console.log("Who liked it: " + data.whoLikedIt);
+        for (var i = 0; i < images.length; i++) {
+          if (images[i]._id == data._id) images[i].reblogs.push(data.whoLikedIt);
+        }
         _this2.setState({ images: images });
+      });
+      socket.on("post undo reblog", function (data) {
+        var images = _this2.state.images;
+        for (var i = 0; i < images.length; i++) {
+          if (images[i]._id == data._id) {
+            var reblogs = [];
+            for (var j = 0; j < images[i].reblogs.length; j++) {
+              if (images[i].reblogs[j] != data.whoLikedIt) reblogs.push(images[i].reblogs[j]);
+            }
+            images[i].reblogs = reblogs;
+          }
+        }
+        var newImages = [];
+        var special_images = _this2.state.special_images;
+        var reblogCheck = false;
+        if (_this2.state.special == "id") {
+          reblogCheck = true;
+          for (var m = 0; m < special_images.length; m++) {
+            if (special_images[m].reblogs.indexOf(_this2.state.searchId) != -1 || special_images[m].author_id == _this2.state.searchId) newImages.push(special_images[m]);
+          }
+        }
+        if (newImages.length == 0 && !reblogCheck) _this2.setState({ images: images });else _this2.setState({ images: images, special_images: newImages });
       });
     }
   }, {
@@ -16952,9 +17016,9 @@ var App = function (_React$Component) {
     value: function showById(id) {
       var special_images = [];
       for (var i = 0; i < this.state.images.length; i++) {
-        if (this.state.images[i].author_id == id) special_images.push(this.state.images[i]);
+        if (this.state.images[i].author_id == id || this.state.images[i].reblogs.indexOf(id) > -1) special_images.push(this.state.images[i]);
       }
-      this.setState({ showSpecial: true, special_images: special_images });
+      this.setState({ showSpecial: true, special_images: special_images, special: "id", searchId: id });
     }
   }, {
     key: 'showLiked',
@@ -16963,7 +17027,7 @@ var App = function (_React$Component) {
       for (var i = 0; i < this.state.images.length; i++) {
         if (this.state.images[i].reactions.indexOf(this.state.userData._id) > -1) special_images.push(this.state.images[i]);
       }
-      this.setState({ showSpecial: true, special_images: special_images });
+      this.setState({ showSpecial: true, special_images: special_images, special: "liked" });
     }
   }, {
     key: 'showByTag',
@@ -16972,12 +17036,12 @@ var App = function (_React$Component) {
       for (var i = 0; i < this.state.images.length; i++) {
         if (this.state.images[i].tags.indexOf(tag) > -1) special_images.push(this.state.images[i]);
       }
-      this.setState({ showSpecial: true, special_images: special_images });
+      this.setState({ showSpecial: true, special_images: special_images, special: "tag", searchId: tag });
     }
   }, {
     key: 'showAll',
     value: function showAll() {
-      this.setState({ showSpecial: false });
+      this.setState({ showSpecial: false, special: undefined, searchId: undefined });
     }
   }, {
     key: 'render',

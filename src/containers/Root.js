@@ -17,7 +17,9 @@ export default class App extends React.Component
       loggedIn: false,
       userData: undefined,
       showSpecial: false,
-      special_images: []
+      special_images: [],
+      special: undefined,
+      searchId: undefined
     };
     this.grayOut = this.grayOut.bind(this);
     this.closeOut = this.closeOut.bind(this);
@@ -55,20 +57,33 @@ export default class App extends React.Component
         else
          return 1;
       });
-      let old_specials = this.state.special_images;
-      let special_images = [];
-      for(var i=0;i<old_specials.length;i++)
+      let special_images  = this.state.special_images;
+      let newImages = [];
+      let idCheck = false;
+      if(this.state.special == "id")
       {
-        let postCheck = false;
+        console.log("checking id");
+        idCheck = true;
+        for(var i=0;i<sortedPosts.length;i++)
+        {
+          if(sortedPosts[i].author_id == this.state.searchId || sortedPosts[i].reblogs.indexOf(this.state.searchId) > -1)
+            newImages.push(sortedPosts[i]);
+        }
+      }
+      if(this.state.special == "tag")
+      {
+        idCheck = true;
+        console.log("checking tags");
         for(var j=0;j<sortedPosts.length;j++)
         {
-          if(sortedPosts[j]._id == old_specials[i]._id)
-           postCheck = true;
+          if(sortedPosts[j].tags.indexOf(this.state.searchId) > -1)
+           newImages.push(sortedPosts[j]);
         }
-        if(postCheck)
-          special_images.push(old_specials[i]);
       }
-      this.setState({images: sortedPosts, special_images: special_images});
+      if(newImages.length == 0 && !idCheck)
+        this.setState({images: sortedPosts});
+      else
+        this.setState({images: sortedPosts, special_images: newImages})
     });
     socket.on("post like",(data)=>{
       let images = this.state.images;
@@ -95,7 +110,66 @@ export default class App extends React.Component
           images[i].reactions = reactions;
         }
       }
+      let newImages = [];
+      let special_images = this.state.special_images;
+      let likeCheck = false;
+      if(this.state.special == "liked")
+      {
+        likeCheck = true;
+        for(var m=0;m<special_images.length;m++)
+        {
+          if(special_images[m].reactions.indexOf(this.state.userData._id)!=-1)
+          {
+            newImages.push(images[m]);
+          }
+        }
+      }
+      if(newImages.length == 0 && !likeCheck)
+        this.setState({images: images});
+      else
+        this.setState({images: images, special_images: newImages});
+    });
+    socket.on("post reblog",(data)=>{
+      let images = this.state.images;
+      //console.log("Who liked it: " + data.whoLikedIt);
+      for(var i=0;i<images.length;i++)
+      {
+        if(images[i]._id == data._id)
+          images[i].reblogs.push(data.whoLikedIt);
+      }
       this.setState({images: images});
+    });
+    socket.on("post undo reblog",(data)=>{
+      let images = this.state.images;
+      for(var i=0;i<images.length;i++)
+      {
+        if(images[i]._id == data._id)
+        {
+          let reblogs = [];
+          for(var j=0;j<images[i].reblogs.length;j++)
+          {
+            if(images[i].reblogs[j] != data.whoLikedIt)
+              reblogs.push(images[i].reblogs[j]);
+          }
+          images[i].reblogs = reblogs;
+        }
+      }
+      let newImages = [];
+      let special_images = this.state.special_images;
+      let reblogCheck = false;
+      if(this.state.special == "id")
+      {
+        reblogCheck = true;
+        for(var m=0;m<special_images.length;m++)
+        {
+          if(special_images[m].reblogs.indexOf(this.state.searchId) != -1 || special_images[m].author_id == this.state.searchId)
+           newImages.push(special_images[m]);
+        }
+      }
+      if(newImages.length == 0 && !reblogCheck)
+        this.setState({images: images});
+      else 
+        this.setState({images: images, special_images: newImages});
     });
   }
   closeOut()
@@ -120,10 +194,10 @@ export default class App extends React.Component
     let special_images = [];
     for(var i=0;i<this.state.images.length;i++)
     {
-      if(this.state.images[i].author_id == id)
+      if(this.state.images[i].author_id == id || this.state.images[i].reblogs.indexOf(id) > -1)
        special_images.push(this.state.images[i]);
     }
-    this.setState({showSpecial: true, special_images: special_images});
+    this.setState({showSpecial: true, special_images: special_images, special: "id", searchId: id});
   }
   showLiked()
   {
@@ -133,7 +207,7 @@ export default class App extends React.Component
       if(this.state.images[i].reactions.indexOf(this.state.userData._id) > -1)
        special_images.push(this.state.images[i]);
     }
-    this.setState({showSpecial: true, special_images: special_images});
+    this.setState({showSpecial: true, special_images: special_images, special: "liked"});
   }
   showByTag(tag)
   {
@@ -143,11 +217,11 @@ export default class App extends React.Component
       if(this.state.images[i].tags.indexOf(tag) > -1)
        special_images.push(this.state.images[i]);
     }
-    this.setState({showSpecial: true, special_images: special_images}); 
+    this.setState({showSpecial: true, special_images: special_images, special: "tag", searchId: tag}); 
   }
   showAll()
   {
-    this.setState({showSpecial: false});
+    this.setState({showSpecial: false, special: undefined, searchId: undefined});
   }
   render()
   {

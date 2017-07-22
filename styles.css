@@ -148,6 +148,14 @@ input
 {
   color: red;
 }
+.reblog:hover
+{
+  color: green;
+}
+.reblogged
+{
+  color:green;
+}
 .loaded
 {
   max-width: 320px;

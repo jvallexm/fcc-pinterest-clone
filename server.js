@@ -164,6 +164,48 @@ io.on('connection', (socket) => {
       });
    });
    
+   socket.on("do a reblog",(data)=>{
+      console.log("doing a reblog");
+      io.sockets.emit("post reblog", {
+         _id: data._id,
+         whoLikedIt: data.whoLikedIt
+      }); 
+      MongoClient.connect(url,(err,db)=>{
+        if(err)
+         console.log(err);
+        else
+        {
+           console.log("posting a reblog to database");
+           var posts = db.collection('posts');
+           var doLike = ()=>{
+               posts.update({_id: data._id},{$push: {reblogs: data.whoLikedIt}});
+           };
+           doLike(db,()=>{db.close();});
+        }
+      });
+   });
+   
+   socket.on("undo a reblog",(data)=>{
+      console.log("undoing a reblog");
+      io.sockets.emit("post undo reblog", {
+         _id: data._id,
+         whoLikedIt: data.whoLikedIt
+      }); 
+      MongoClient.connect(url,(err,db)=>{
+        if(err)
+         console.log(err);
+        else
+        {
+           console.log("pulling a reblog to database");
+           var posts = db.collection('posts');
+           var doLike = ()=>{
+               posts.update({_id: data._id},{$pull: {reblogs: data.whoLikedIt}});
+           };
+           doLike(db,()=>{db.close();});
+        }
+      });
+   });   
+   
 //below from https://www.codementor.io/chrisharrington/how-to-implement-twitter-sign-expressjs-oauth-du107vbhy
     var twitter = new Twitter({
         consumerKey: process.env.CONSUMER_KEY,

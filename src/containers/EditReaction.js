@@ -106,7 +106,8 @@ export default class EditReaction extends React.Component
          tags: this.state.tags.toLowerCase().split(","),
          author: this.props.author,
          reactions: [],
-         author_id: this.props.author_id
+         author_id: this.props.author_id,
+         reblogs: []
        };
        console.log("Sending new post: " + JSON.stringify(newPost));
        this.props.socket.emit("new post", {post: newPost, push_to: this.props.author_id});

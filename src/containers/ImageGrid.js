@@ -89,6 +89,7 @@ class WrappedImage extends React.Component
     this.showOptions = this.showOptions.bind(this);
     this.showDelete = this.showDelete.bind(this);
     this.deleteOne = this.deleteOne.bind(this);
+    this.doAReblog = this.doAReblog.bind(this);
   }
   deleteOne(obj)
   {
@@ -121,6 +122,21 @@ class WrappedImage extends React.Component
       });
     else
       this.props.socket.emit("do a dislike",{
+         _id: this.props.post._id,
+         whoLikedIt: this.props.author_id
+      });
+  }
+  doAReblog()
+  {
+    if(this.props.author_id == "12")
+      return false;
+    if(this.props.post.reblogs.indexOf(this.props.author_id)==-1)
+      this.props.socket.emit("do a reblog",{
+         _id: this.props.post._id,
+         whoLikedIt: this.props.author_id
+      });
+    else
+      this.props.socket.emit("undo a reblog",{
          _id: this.props.post._id,
          whoLikedIt: this.props.author_id
       });
@@ -162,10 +178,15 @@ class WrappedImage extends React.Component
                           <i className="fa fa-heart"/> </div>
             { this.props.author_id!=this.props.post.author_id ?
             
-              <div className="col-sm-6"> <i className="fa fa-exchange" /> </div>
+              <div className={this.props.post.reblogs.indexOf(this.props.author_id)==-1||this.props.post.reblogs == undefined
+                              ? "reblog col-sm-6" 
+                              : "reblogged col-sm-6"
+              }>
+                 <i className="fa fa-exchange"
+                    onClick={this.doAReblog} />
+              </div>
  
             :
- 
               <div className="col-sm-6"> <i className="fa fa-gear" 
                        onClick={this.showOptions}/></div>
             
