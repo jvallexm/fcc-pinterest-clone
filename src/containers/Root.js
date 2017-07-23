@@ -57,7 +57,6 @@ export default class App extends React.Component
         else
          return 1;
       });
-      let special_images  = this.state.special_images;
       let newImages = [];
       let idCheck = false;
       if(this.state.special == "id")
@@ -83,7 +82,7 @@ export default class App extends React.Component
       if(newImages.length == 0 && !idCheck)
         this.setState({images: sortedPosts});
       else
-        this.setState({images: sortedPosts, special_images: newImages})
+        this.setState({images: sortedPosts, special_images: newImages});
     });
     socket.on("post like",(data)=>{
       let images = this.state.images;
@@ -170,6 +169,27 @@ export default class App extends React.Component
         this.setState({images: images});
       else 
         this.setState({images: images, special_images: newImages});
+    });
+    socket.on("get updated post",(data)=>{
+      let images = this.state.images;
+      let special_images = this.state.special_images;
+      for(var i=0;i<images.length;i++)
+      {
+        if(images[i]._id == data._id)
+        {
+          images[i].name = data.name;
+          images[i].tags = data.tags;
+        }
+      }
+      for(var j=0;j<special_images.length;j++)
+      {
+        if(special_images[j]._id == data._id)
+        {
+          special_images[j].name = data.name;
+          special_images[j].tags = data.tags;
+        }
+      }
+      this.setState({images: images, special_images: special_images, grayOut: false, isNew: false, toEdit: undefined});
     });
   }
   closeOut()
@@ -295,7 +315,7 @@ export default class App extends React.Component
           </div>  
         </div>  
      </div> 
-    )
+    );
   }  
 }
 

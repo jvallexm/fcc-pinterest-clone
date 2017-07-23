@@ -8,7 +8,7 @@ export default class ImageGrid extends React.Component
     this.state = {
       embiggened: -1,
       ticks: 0
-    }
+    };
     this.embiggen = this.embiggen.bind(this);
     this.tick = this.tick.bind(this);
   }
@@ -94,7 +94,7 @@ class WrappedImage extends React.Component
   }
   deleteOne(obj)
   {
-    console.log("Deleting: " + JSON.stringify(obj))
+    console.log("Deleting: " + JSON.stringify(obj));
     this.props.socket.emit("delete one", {_id: obj._id});
     this.setState({deleting: true});
   }
@@ -161,11 +161,11 @@ class WrappedImage extends React.Component
             {this.props.post.name}
           </div>
           <div className={this.props.whichOne == this.props.thisOne ? "tags wordwrap" :"tags wordwrap"}>
-             {this.props.post.tags.map((d,i)=>
+             <i className="fa fa-tags" /> {this.props.post.tags.map((d,i)=>
              //change to replace all
                <span key={JSON.stringify(d)}
                      onClick={()=>this.props.showByTag(d)}>
-                     <i className="fa fa-tags" /> #{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}
+                     #{d.replace(/_/g," ")}{i<this.props.post.tags.length-1? " " : ""}
                </span>            
              )}
           </div>

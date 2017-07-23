@@ -206,6 +206,34 @@ io.on('connection', (socket) => {
       });
    });   
    
+   socket.on("update post",(data)=>{
+       console.log("updating a post");
+       io.sockets.emit("get updated post",{
+          _id: data.post_id,
+          name: data.name,
+          tags: data.tags
+       });
+       MongoClient.connect(url,(err,db)=>{
+          if(err)
+           console.log("err");
+          else
+          {
+              console.log("updating a post to database");
+              var posts = db.collection("posts");
+              var doUpdate = ()=>{
+                  posts.update({_id: data.post_id},{
+                      $set: {
+                         name: data.name,
+                         tags: data.tags
+                      }
+                  });
+              };
+              doUpdate(db,()=>{db.close();});
+          }
+       });
+       
+   });
+   
 //below from https://www.codementor.io/chrisharrington/how-to-implement-twitter-sign-expressjs-oauth-du107vbhy
     var twitter = new Twitter({
         consumerKey: process.env.CONSUMER_KEY,

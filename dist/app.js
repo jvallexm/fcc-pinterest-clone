@@ -16283,7 +16283,8 @@ var EditReaction = function (_React$Component) {
       messages: [],
       url: "",
       tags: "",
-      title: ""
+      title: "",
+      _id: ""
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
@@ -16296,7 +16297,9 @@ var EditReaction = function (_React$Component) {
       if (this.props.toEdit != undefined) {
         this.setState({ title: this.props.toEdit.name,
           url: this.props.toEdit.link,
-          tags: this.props.toEdit.tags.join(",") });
+          tags: this.props.toEdit.tags.join(","),
+          _id: this.props.toEdit._id
+        });
       }
     }
   }, {
@@ -16371,7 +16374,12 @@ var EditReaction = function (_React$Component) {
           this.props.socket.emit("new post", { post: newPost, push_to: this.props.author_id });
           this.props.closeOut();
         } else {
-          this.setState({ messages: ["Do something else"] });
+          this.props.socket.emit("update post", {
+            post_id: this.state._id,
+            name: this.state.title,
+            tags: this.state.tags.toLowerCase().split(",")
+          });
+          this.setState({ messages: ["Updating..."] });
         }
       }
     }
@@ -16708,6 +16716,8 @@ var WrappedImage = function (_React$Component2) {
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
             { className: this.props.whichOne == this.props.thisOne ? "tags wordwrap" : "tags wordwrap" },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-tags' }),
+            ' ',
             this.props.post.tags.map(function (d, i) {
               return (
                 //change to replace all
@@ -16717,8 +16727,7 @@ var WrappedImage = function (_React$Component2) {
                     onClick: function onClick() {
                       return _this4.props.showByTag(d);
                     } },
-                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-tags' }),
-                  ' #',
+                  '#',
                   d.replace(/_/g, " "),
                   i < _this4.props.post.tags.length - 1 ? " " : ""
                 )
@@ -16925,7 +16934,6 @@ var App = function (_React$Component) {
         var sortedPosts = data.posts.sort(function (a, b) {
           if (a._id > b._id) return -1;else return 1;
         });
-        var special_images = _this2.state.special_images;
         var newImages = [];
         var idCheck = false;
         if (_this2.state.special == "id") {
@@ -17005,6 +17013,23 @@ var App = function (_React$Component) {
           }
         }
         if (newImages.length == 0 && !reblogCheck) _this2.setState({ images: images });else _this2.setState({ images: images, special_images: newImages });
+      });
+      socket.on("get updated post", function (data) {
+        var images = _this2.state.images;
+        var special_images = _this2.state.special_images;
+        for (var i = 0; i < images.length; i++) {
+          if (images[i]._id == data._id) {
+            images[i].name = data.name;
+            images[i].tags = data.tags;
+          }
+        }
+        for (var j = 0; j < special_images.length; j++) {
+          if (special_images[j]._id == data._id) {
+            special_images[j].name = data.name;
+            special_images[j].tags = data.tags;
+          }
+        }
+        _this2.setState({ images: images, special_images: special_images, grayOut: false, isNew: false, toEdit: undefined });
       });
     }
   }, {
