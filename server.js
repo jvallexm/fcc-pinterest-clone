@@ -47,6 +47,33 @@ io.on('connection', (socket) => {
        });
     });
     
+    socket.on("needs users", ()=>{
+         console.log("Gettings users..");
+       MongoClient.connect(url, (err,db)=>{
+          if(err)
+           console.log(err);
+          else
+          {
+             var posts = db.collection('users');
+             var getAll = ()=>{
+               posts.find({},{})
+                    .toArray((err,data)=>{
+                        if(err)
+                         console.log(err);
+                        else
+                        { 
+                          console.log("Sending " + data.length + " users");
+                          socket.emit("send users", {users: data});
+                          db.close();
+                        }  
+                    });
+             };
+             getAll(db);
+          }
+       });
+        
+    });
+    
     socket.on("get user data", (data)=>{
         console.log("getting user data");
         MongoClient.connect(url,(err,db)=>{
@@ -73,6 +100,7 @@ io.on('connection', (socket) => {
                         likes: []
                       };
                       socket.emit("send user data", {data: newUser});
+                      io.sockets.emit("push users",{user: newUser})
                       users.insert(newUser);
                   }
               })
@@ -278,9 +306,10 @@ io.on('connection', (socket) => {
     app.get("/loggedin:socket", (req,res)=>
     {
       console.log("logged in redirecting");
-      var thisSocket = req.params.socket.substr(1,req.params.socket.length-1);
+      //var thisSocket = req.params.socket.substr(1,req.params.socket.length-1);
       socket.emit("datas",{results: theseResults});
       res.redirect('./close.html');
     });
 
+    
 });

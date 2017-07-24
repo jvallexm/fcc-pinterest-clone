@@ -19,7 +19,8 @@ export default class App extends React.Component
       showSpecial: false,
       special_images: [],
       special: undefined,
-      searchId: undefined
+      searchId: undefined,
+      users: []
     };
     this.grayOut = this.grayOut.bind(this);
     this.closeOut = this.closeOut.bind(this);
@@ -34,11 +35,21 @@ export default class App extends React.Component
     if(this.state.images.length<1)
     {
       socket.emit("needs posts");
+      socket.emit("needs users");
     }
     socket.on("datas",(data)=>{
       //console.log(JSON.stringify(data));
       let newData={user_id: data.results.user_id, screen_name: data.results.screen_name};
       socket.emit("get user data", newData);
+    });
+    socket.on("send users",(data)=>{
+      console.log("getting user data for " +data.users.length + " users");
+      this.setState({users: data.users});
+    });
+    socket.on("push user",(data)=>{
+      let oldUsers = this.state.users;
+      oldUsers.push(data.user);
+      this.setState({users: oldUsers});
     });
     socket.on("force post update",()=>{
       socket.emit("needs posts");
@@ -50,7 +61,7 @@ export default class App extends React.Component
       this.setState({loggedIn: true, userData: userData});
     });
     socket.on("send posts",(data)=>{
-      console.log("got some posts: " + data.posts.length);
+      //console.log("got some posts: " + data.posts.length);
       let sortedPosts  = data.posts.sort((a,b)=>{
         if(a._id > b._id)
          return -1;
@@ -72,7 +83,7 @@ export default class App extends React.Component
       if(this.state.special == "tag")
       {
         idCheck = true;
-        console.log("checking tags");
+        //console.log("checking tags");
         for(var j=0;j<sortedPosts.length;j++)
         {
           if(sortedPosts[j].tags.indexOf(this.state.searchId) > -1)
@@ -179,6 +190,7 @@ export default class App extends React.Component
         {
           images[i].name = data.name;
           images[i].tags = data.tags;
+          
         }
       }
       for(var j=0;j<special_images.length;j++)
@@ -310,7 +322,8 @@ export default class App extends React.Component
                          author_id={this.state.userData!=undefined ? this.state.userData._id : "12"}
                          socket={socket}
                          showByTag={this.showByTag}
-                         showById={this.showById}/>
+                         showById={this.showById}
+                         users={this.state.users}/>
             </div>  
           </div>  
         </div>  

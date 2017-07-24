@@ -16534,14 +16534,21 @@ var ImageGrid = function (_React$Component) {
 
     _this.state = {
       embiggened: -1,
-      ticks: 0
+      ticks: 0,
+      whichComments: -1
     };
     _this.embiggen = _this.embiggen.bind(_this);
     _this.tick = _this.tick.bind(_this);
+    _this.commentsShown = _this.commentsShown.bind(_this);
     return _this;
   }
 
   _createClass(ImageGrid, [{
+    key: 'commentsShown',
+    value: function commentsShown(num) {
+      this.setState({ whichComments: num });
+    }
+  }, {
     key: 'tick',
     value: function tick() {
       var newTicks = this.state.ticks + 1;
@@ -16599,7 +16606,12 @@ var ImageGrid = function (_React$Component) {
             whichOne: _this2.state.embiggened,
             tick: _this2.tick,
             showByTag: _this2.props.showByTag,
-            showById: _this2.props.showById });
+            showById: _this2.props.showById,
+            users: _this2.props.users,
+            commenting: _this2.state.whichComments,
+            showComments: function showComments() {
+              return _this2.commentsShown(i);
+            } });
         })
       );
     }
@@ -16622,7 +16634,9 @@ var WrappedImage = function (_React$Component2) {
     _this3.state = {
       options: false,
       delete: false,
-      deleting: false
+      deleting: false,
+      error: false,
+      showComments: false
     };
     _this3.doALike = _this3.doALike.bind(_this3);
     _this3.loadItUp = _this3.loadItUp.bind(_this3);
@@ -16630,10 +16644,23 @@ var WrappedImage = function (_React$Component2) {
     _this3.showDelete = _this3.showDelete.bind(_this3);
     _this3.deleteOne = _this3.deleteOne.bind(_this3);
     _this3.doAReblog = _this3.doAReblog.bind(_this3);
+    _this3.sendError = _this3.sendError.bind(_this3);
+    _this3.showComments = _this3.showComments.bind(_this3);
     return _this3;
   }
 
   _createClass(WrappedImage, [{
+    key: 'componentWillUpdate',
+    value: function componentWillUpdate(prevProps) {
+      if (this.props.whichOne != prevProps.whichOne) {
+        this.setState({ delete: false, deleting: false, showComments: false });
+      }
+      if (this.props.commenting != prevProps.commenting && prevProps.commenting != this.props.thisOne) {
+        this.setState({ delete: false, deleting: false, showComments: false });
+        this.loadItUp();
+      }
+    }
+  }, {
     key: 'deleteOne',
     value: function deleteOne(obj) {
       console.log("Deleting: " + JSON.stringify(obj));
@@ -16641,14 +16668,30 @@ var WrappedImage = function (_React$Component2) {
       this.setState({ deleting: true });
     }
   }, {
+    key: 'showComments',
+    value: function showComments() {
+      this.setState({ showComments: !this.state.showComments });
+      this.loadItUp();
+      this.props.showComments();
+    }
+  }, {
+    key: 'sendError',
+    value: function sendError() {
+      console.log("trying to make error");
+      this.setState({ error: true });
+    }
+  }, {
     key: 'showDelete',
     value: function showDelete() {
-      this.setState({ delete: !this.state.delete });
+      this.setState({ delete: !this.state.delete, showComments: false });
     }
   }, {
     key: 'showOptions',
     value: function showOptions() {
-      this.setState({ options: !this.state.options });
+      var check = false;
+      if (this.state.showComments == true) check = true;
+      this.setState({ options: !this.state.options, showComments: false });
+      if (check) this.loadItUp();
     }
   }, {
     key: 'loadItUp',
@@ -16689,9 +16732,10 @@ var WrappedImage = function (_React$Component2) {
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
         { className: this.props.whichOne == this.props.thisOne ? "post-wrapper" : "post-wrapper max-250" },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: this.props.post.link,
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: this.state.error ? "https://hlfppt.org/wp-content/uploads/2017/04/placeholder.png" : this.props.post.link,
           className: this.props.whichOne == this.props.thisOne ? "img-larg" : "img-smol",
           onClick: this.props.embiggen,
+          onError: this.sendError,
           onLoad: this.loadItUp }),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
@@ -16710,8 +16754,8 @@ var WrappedImage = function (_React$Component2) {
           { className: 'text-center container-fluid pad-top' },
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
-            { className: this.props.whichOne == this.props.thisOne ? "cursive wordwrap" : "cursive wordwrap" },
-            this.props.post.name
+            { className: !this.state.error ? "cursive wordwrap" : "error cursive wordwrap" },
+            !this.state.error ? this.props.post.name : "Sorry, looks like this link is broken :("
           ),
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
@@ -16761,7 +16805,8 @@ var WrappedImage = function (_React$Component2) {
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
               { className: this.props.post.author_id == this.props.author_id ? "col-sm-3" : "col-sm-4" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-comments' })
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: this.state.showComments ? "fa fa-comments com-show" : "fa fa-comments com-hov",
+                onClick: this.showComments })
             ),
             this.props.post.author_id == this.props.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
@@ -16825,7 +16870,37 @@ var WrappedImage = function (_React$Component2) {
               ' '
             )
           )
-        )
+        ),
+        this.state.showComments ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'div',
+          { className: 'comments text-left padding-10' },
+          this.props.post.reactions.length == 0 && this.props.post.reblogs == 0 ? "No reactions yet!" : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'span',
+            null,
+            this.props.post.reactions.map(function (d, i) {
+              return _this4.props.users.map(function (u, ii) {
+                return u._id == d ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'div',
+                  null,
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart error' }),
+                  ' ',
+                  u.screen_name
+                ) : "";
+              });
+            }),
+            this.props.post.reblogs.map(function (d, i) {
+              return _this4.props.users.map(function (u, ii) {
+                return u._id == d ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'div',
+                  null,
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange reblogged' }),
+                  ' ',
+                  u.screen_name
+                ) : "";
+              });
+            })
+          )
+        ) : ""
       );
     }
   }]);
@@ -16895,7 +16970,8 @@ var App = function (_React$Component) {
       showSpecial: false,
       special_images: [],
       special: undefined,
-      searchId: undefined
+      searchId: undefined,
+      users: []
     };
     _this.grayOut = _this.grayOut.bind(_this);
     _this.closeOut = _this.closeOut.bind(_this);
@@ -16914,11 +16990,21 @@ var App = function (_React$Component) {
 
       if (this.state.images.length < 1) {
         socket.emit("needs posts");
+        socket.emit("needs users");
       }
       socket.on("datas", function (data) {
         //console.log(JSON.stringify(data));
         var newData = { user_id: data.results.user_id, screen_name: data.results.screen_name };
         socket.emit("get user data", newData);
+      });
+      socket.on("send users", function (data) {
+        console.log("getting user data for " + data.users.length + " users");
+        _this2.setState({ users: data.users });
+      });
+      socket.on("push user", function (data) {
+        var oldUsers = _this2.state.users;
+        oldUsers.push(data.user);
+        _this2.setState({ users: oldUsers });
       });
       socket.on("force post update", function () {
         socket.emit("needs posts");
@@ -16930,7 +17016,7 @@ var App = function (_React$Component) {
         _this2.setState({ loggedIn: true, userData: userData });
       });
       socket.on("send posts", function (data) {
-        console.log("got some posts: " + data.posts.length);
+        //console.log("got some posts: " + data.posts.length);
         var sortedPosts = data.posts.sort(function (a, b) {
           if (a._id > b._id) return -1;else return 1;
         });
@@ -16945,7 +17031,7 @@ var App = function (_React$Component) {
         }
         if (_this2.state.special == "tag") {
           idCheck = true;
-          console.log("checking tags");
+          //console.log("checking tags");
           for (var j = 0; j < sortedPosts.length; j++) {
             if (sortedPosts[j].tags.indexOf(_this2.state.searchId) > -1) newImages.push(sortedPosts[j]);
           }
@@ -17201,7 +17287,8 @@ var App = function (_React$Component) {
                 author_id: this.state.userData != undefined ? this.state.userData._id : "12",
                 socket: socket,
                 showByTag: this.showByTag,
-                showById: this.showById })
+                showById: this.showById,
+                users: this.state.users })
             )
           )
         )

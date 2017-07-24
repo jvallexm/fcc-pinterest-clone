@@ -172,3 +172,18 @@ i
 {
   padding-top: 5px;
 }
+.comments
+{
+  margin-top: 5px;
+  max-height: 200px;
+  background-color: #f0e8ff;
+  overflow: scroll;
+}
+.com-hov:hover
+{
+  color: blue;
+}
+.com-show
+{
+  color:blue;
+}
