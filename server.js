@@ -100,7 +100,7 @@ io.on('connection', (socket) => {
                         likes: []
                       };
                       socket.emit("send user data", {data: newUser});
-                      io.sockets.emit("push users",{user: newUser})
+                      io.sockets.emit("push user",{user: newUser})
                       users.insert(newUser);
                   }
               })
