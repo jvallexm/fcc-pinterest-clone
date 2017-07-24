@@ -16703,6 +16703,7 @@ var WrappedImage = function (_React$Component2) {
     value: function doALike() {
       if (this.props.post.author_id == this.props.author_id) return false;
       if (this.props.author_id == "12") return false;
+      console.log("doing a like");
       if (this.props.post.reactions.indexOf(this.props.author_id) == -1) this.props.socket.emit("do a like", {
         _id: this.props.post._id,
         whoLikedIt: this.props.author_id
@@ -16788,7 +16789,8 @@ var WrappedImage = function (_React$Component2) {
                 'span',
                 { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0 ? "error" : "" },
                 this.props.post.reactions.length > 0 ? this.props.post.reactions.length + " " : "",
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart' })
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart',
+                  onClick: this.doALike })
               )
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -17322,7 +17324,7 @@ var App = function (_React$Component) {
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'span',
                 { className: 'tags' },
-                'Jennifer Valle Made this in 2017!'
+                'Made in 2017 by Jennifer Valle!'
               )
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(

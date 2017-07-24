@@ -157,6 +157,7 @@ class WrappedImage extends React.Component
       return false;
     if(this.props.author_id == "12")
       return false;
+    console.log("doing a like");  
     if(this.props.post.reactions.indexOf(this.props.author_id)==-1)
       this.props.socket.emit("do a like",{
          _id: this.props.post._id,
@@ -223,7 +224,8 @@ class WrappedImage extends React.Component
                                        ||  (this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0)
                                        ? "error"
                                        : ""}>
-                      {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}<i className="fa fa-heart"/>
+                      {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}<i className="fa fa-heart"
+                                                                                                           onClick={this.doALike}/>
                   </span> 
               </div>
               <div className={this.props.post.author_id==this.props.author_id ? "col-sm-3" : "col-sm-4"}>

@@ -149,7 +149,7 @@ io.on('connection', (socket) => {
            var posts = db.collection('posts');
            var doLike = ()=>{
                posts.update({_id: data._id},{$push: {reactions: data.whoLikedIt}});
-           }
+           };
            doLike(db,()=>{db.close();});
         }
       });
