@@ -280,12 +280,12 @@ class WrappedImage extends React.Component
              : <span>
                  {this.props.post.reactions.map((d,i)=>
                    this.props.users.map((u,ii) => 
-                      u._id == d ? <div><i className="fa fa-heart error" /> {u.screen_name}</div> : ""
+                      u._id == d ? <div><i className="fa fa-heart error" /> <span className="bold" onClick={()=>this.props.showById(d)}>{u.screen_name}</span> </div> : ""
                    )
                  )}
                 {this.props.post.reblogs.map((d,i)=>
                    this.props.users.map((u,ii) => 
-                      u._id == d ? <div><i className="fa fa-exchange reblogged" /> {u.screen_name}</div> : ""
+                      u._id == d ? <div><i className="fa fa-exchange reblogged" /> <span className="bold" onClick={()=>this.props.showById(d)}>{u.screen_name}</span></div> : ""
                    )
                  )}
                </span> 

@@ -1,6 +1,7 @@
 import React from 'react';
 import EditReaction from './EditReaction.js';
 import ImageGrid from './ImageGrid.js';
+import Search from './Search.js';
 import FacebookLogin from 'react-facebook-login';
 import io from 'socket.io-client';
 const socket=io();
@@ -20,7 +21,8 @@ export default class App extends React.Component
       special_images: [],
       special: undefined,
       searchId: undefined,
-      users: []
+      users: [],
+      search: false
     };
     this.grayOut = this.grayOut.bind(this);
     this.closeOut = this.closeOut.bind(this);
@@ -29,6 +31,8 @@ export default class App extends React.Component
     this.showAll = this.showAll.bind(this);
     this.showLiked = this.showLiked.bind(this);
     this.showByTag = this.showByTag.bind(this);
+    this.toggleSearch = this.toggleSearch.bind(this);
+    this.showByArray = this.showByArray.bind(this);
   }
   componentWillMount()
   {
@@ -229,6 +233,7 @@ export default class App extends React.Component
       if(this.state.images[i].author_id == id || this.state.images[i].reblogs.indexOf(id) > -1)
        special_images.push(this.state.images[i]);
     }
+    window.scrollTo(0,0);
     this.setState({showSpecial: true, special_images: special_images, special: "id", searchId: id});
   }
   showLiked()
@@ -239,6 +244,7 @@ export default class App extends React.Component
       if(this.state.images[i].reactions.indexOf(this.state.userData._id) > -1)
        special_images.push(this.state.images[i]);
     }
+    window.scrollTo(0,0);
     this.setState({showSpecial: true, special_images: special_images, special: "liked"});
   }
   showByTag(tag)
@@ -249,11 +255,22 @@ export default class App extends React.Component
       if(this.state.images[i].tags.indexOf(tag) > -1)
        special_images.push(this.state.images[i]);
     }
+    window.scrollTo(0,0);
     this.setState({showSpecial: true, special_images: special_images, special: "tag", searchId: tag}); 
+  }
+  showByArray(arr,name)
+  {
+    window.scrollTo(0,0);
+    this.setState({showSpecial: true, special_images: arr, special: "other", searchId: name}); 
   }
   showAll()
   {
+    window.scrollTo(0,0);
     this.setState({showSpecial: false, special: undefined, searchId: undefined});
+  }
+  toggleSearch()
+  {
+    this.setState({search: !this.state.search});
   }
   render()
   {
@@ -314,9 +331,19 @@ export default class App extends React.Component
             {this.state.loggedIn ? 
             <button className="btn well"
                     onClick={this.showLiked}>Favorites <i className="fa fa-heart"/></button> : "" }
-              <button className="btn well">Search <i className="fa fa-search"/></button>
+            <button className="btn well" onClick={this.toggleSearch}>Search <i className="fa fa-search"/></button>
+            {
+              this.state.search ?
+              <Search images={this.state.images}
+                      users={this.state.users} 
+                      showByTag={this.showByTag}
+                      showByArray={this.showByArray}
+                      showById={this.showById}/>
+              : ""        
+            }
             </div>  
             <div className="col-md-10">
+              {this.state.images==[] ? <h1>Loading... <i className="fa fa-spinner fa-spin"/> </h1> : "" }
               <ImageGrid images={this.state.showSpecial ? this.state.special_images : this.state.images}
                          grayOut={this.grayOut}
                          author_id={this.state.userData!=undefined ? this.state.userData._id : "12"}
