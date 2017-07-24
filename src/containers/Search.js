@@ -30,9 +30,9 @@ export default class Search extends React.Component{
               this.setState({message: "Sorry, letters, numbers, _'s , and -'s only!"});
               return false;
             }
-            if(e.target.value.length > 20)
+            if(e.target.value.length > 25)
             {
-                this.setState({message: "Sorry, tags can only be 20 characters long"});
+                this.setState({message: "Sorry, tags can only be 25 characters long"});
                 return false;            }
                                             
           }
@@ -43,9 +43,9 @@ export default class Search extends React.Component{
     {
         if(this.state.searchType == "-" || this.state.searchType==null)
             return false;
-        if(this.state.search < 4)
+        if(this.state.search < 3)
         {
-            this.setState({message: "Searches must be at least 4 characters long"});
+            this.setState({message: "Searches must be at least 3 characters long"});
             return false;
         }
         let results=[];

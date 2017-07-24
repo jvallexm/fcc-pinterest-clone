@@ -16329,8 +16329,8 @@ var EditReaction = function (_React$Component) {
         }
         if (tags.length > 1) {
           for (var j = 0; j < tags.length - 1; j++) {
-            if (tags[j].length < 5) {
-              this.setState({ messages: ["Tags must be at least 5 characters long"] });
+            if (tags[j].length < 3) {
+              this.setState({ messages: ["Tags must be at least 3 characters long"] });
               return false;
             }
           }
@@ -16340,8 +16340,8 @@ var EditReaction = function (_React$Component) {
           return false;
         }
         for (var i = 0; i < tags.length; i++) {
-          if (tags[i].length > 20) {
-            this.setState({ messages: ["Tags can't be more than 20 characters long"] });
+          if (tags[i].length > 25) {
+            this.setState({ messages: ["Tags can't be more than 25 characters long"] });
             return false;
           }
         }
@@ -16355,8 +16355,8 @@ var EditReaction = function (_React$Component) {
       //expression from https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
       if (!/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(this.state.url)) newMessages.push("Please enter a valid URL");
       var splitTags = this.state.tags.split(",");
-      if (splitTags[splitTags.length - 1].length < 5 && this.state.tags.length > 0) newMessages.push("Tags must be at least 5 characters long");
-      if (this.state.title.length < 5) newMessages.push("Title must be at least 5 characters");
+      if (splitTags[splitTags.length - 1].length < 3 && this.state.tags.length > 0) newMessages.push("Tags must be at least 3 characters long");
+      if (this.state.title.length < 3) newMessages.push("Title must be at least 3 characters");
       if (newMessages.length > 0) this.setState({ messages: newMessages });else {
         if (this.props.isNew) {
           var today = new Date();
@@ -17420,8 +17420,8 @@ var Search = function (_React$Component) {
                         this.setState({ message: "Sorry, letters, numbers, _'s , and -'s only!" });
                         return false;
                     }
-                    if (e.target.value.length > 20) {
-                        this.setState({ message: "Sorry, tags can only be 20 characters long" });
+                    if (e.target.value.length > 25) {
+                        this.setState({ message: "Sorry, tags can only be 25 characters long" });
                         return false;
                     }
                 }
@@ -17432,8 +17432,8 @@ var Search = function (_React$Component) {
         key: "handleSubmit",
         value: function handleSubmit() {
             if (this.state.searchType == "-" || this.state.searchType == null) return false;
-            if (this.state.search < 4) {
-                this.setState({ message: "Searches must be at least 4 characters long" });
+            if (this.state.search < 3) {
+                this.setState({ message: "Searches must be at least 3 characters long" });
                 return false;
             }
             var results = [];
