@@ -61,9 +61,9 @@ export default class EditReaction extends React.Component
       {
         for(var j=0;j<tags.length-1;j++)
         {
-          if(tags[j].length < 5)
+          if(tags[j].length < 3)
           {
-            this.setState({messages: ["Tags must be at least 5 characters long"]});
+            this.setState({messages: ["Tags must be at least 3 characters long"]});
             return false;
           } 
         }
@@ -75,9 +75,9 @@ export default class EditReaction extends React.Component
       }  
       for(var i=0;i<tags.length;i++)
       {
-        if(tags[i].length > 20)
+        if(tags[i].length > 25)
         {
-          this.setState({messages: ["Tags can't be more than 20 characters long"]});
+          this.setState({messages: ["Tags can't be more than 25 characters long"]});
           return false;
         }
       }  
@@ -91,10 +91,10 @@ export default class EditReaction extends React.Component
    if(!/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(this.state.url))
     newMessages.push("Please enter a valid URL");
    let splitTags = this.state.tags.split(",");
-   if(splitTags[splitTags.length-1].length < 5 && this.state.tags.length > 0) 
-     newMessages.push("Tags must be at least 5 characters long");
-   if(this.state.title.length < 5)
-     newMessages.push("Title must be at least 5 characters");
+   if(splitTags[splitTags.length-1].length < 3 && this.state.tags.length > 0) 
+     newMessages.push("Tags must be at least 3 characters long");
+   if(this.state.title.length < 3)
+     newMessages.push("Title must be at least 3 characters");
    if(newMessages.length>0)
      this.setState({messages: newMessages});
    else

@@ -262,6 +262,10 @@ io.on('connection', (socket) => {
        
    });
    
+   socket.on("disconnect",()=>{
+      console.log("User disconnected."); 
+   });
+   
 //below from https://www.codementor.io/chrisharrington/how-to-implement-twitter-sign-expressjs-oauth-du107vbhy
     var twitter = new Twitter({
         consumerKey: process.env.CONSUMER_KEY,
