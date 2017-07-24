@@ -18,8 +18,7 @@ body
 .img-smol
 {
   border-radius: 5px;
-  max-width: 250px;
-  max-height: 250px;
+  width: 250px;
   position: relative;
 }
 .img-larg
