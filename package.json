@@ -13,7 +13,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "dotenv": "^4.0.0",
-    "express": "https://registry.npmjs.org/express/-/express-4.14.1.tgz",
+    "express": "*",
     "mongodb": "^2.2.30",
     "node-twitter-api": "^1.8.0",
     "react": "https://registry.npmjs.org/react/-/react-15.4.2.tgz",

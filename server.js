@@ -11,9 +11,9 @@ const server = app
   .listen(process.env.PORT, () => console.log(`Listening on ${ process.env.PORT }`));
 var url = process.env.MONGO_URL;
 
-app.set('socketio', io);
-
 const io = require('socket.io')(server);
+
+app.set('socketio', io);
 
 var currentUsers = [];
 
