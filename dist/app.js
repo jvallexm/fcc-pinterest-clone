@@ -17224,6 +17224,9 @@ var App = function (_React$Component) {
               author_id: this.state.userData._id })
           )
         ) : "",
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { className: 'banner', onClick: function onClick() {
+            return window.open("https://github.com/jvallexm");
+          }, src: 'https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67', alt: 'Fork me on GitHub', 'data-canonical-src': 'https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png' }),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'center',
           null,
@@ -17233,7 +17236,7 @@ var App = function (_React$Component) {
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'h1',
               null,
-              'React Board'
+              'React-terest'
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'h4',
@@ -17315,7 +17318,12 @@ var App = function (_React$Component) {
                 users: this.state.users,
                 showByTag: this.showByTag,
                 showByArray: this.showByArray,
-                showById: this.showById }) : ""
+                showById: this.showById }) : "",
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'span',
+                { className: 'tags' },
+                'Jennifer Valle Made this in 2017!'
+              )
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',

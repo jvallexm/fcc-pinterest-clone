@@ -287,10 +287,13 @@ export default class App extends React.Component
                             author_id={this.state.userData._id}/>
              </div>  
            </div>: ""}
-           
+
+              <img className="banner" onClick={()=>window.open("https://github.com/jvallexm")} src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" />
+
         <center>
+
           <div className="head padding-10 max-500"> 
-            <h1>React Board</h1>
+            <h1>React-terest</h1>
             <h4>A 'Pinterest-Style' Board of Reactions</h4>
           </div>  
         </center>  
@@ -341,6 +344,7 @@ export default class App extends React.Component
                       showById={this.showById}/>
               : ""        
             }
+            <span className="tags">Made in 2017 by Jennifer Valle!</span>
             </div>  
             <div className="col-md-10">
               {this.state.images==[] ? <h1>Loading... <i className="fa fa-spinner fa-spin"/> </h1> : "" }
