@@ -13,7 +13,7 @@ var url = process.env.MONGO_URL;
 
 const io = require('socket.io')(server);
 
-app.set('socketio', io);
+//app.set('socketio', io);
 
 var currentUsers = [];
 
