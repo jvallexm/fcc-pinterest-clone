@@ -15,8 +15,6 @@ const io = require('socket.io')(server);
 
 //app.set('socketio', io);
 
-var currentUsers = [];
-
 io.on('connection', (socket) => {
     
     console.log("new connection: " + socket.id);

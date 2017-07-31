@@ -17443,8 +17443,10 @@ var Search = function (_React$Component) {
                 }
             } else {
                 for (var j = 0; j < this.props.users.length; j++) {
-                    //console.log(this.props.users[j].screen_name);
-                    if (this.props.users[j].screen_name.toLowerCase().indexOf(this.state.search.toLowerCase()) > -1) results.push(this.props.users[j]._id);
+                    if (this.props.users[j].screen_name != null) {
+                        var lowerName = this.props.users[j].screen_name.toLowerCase();
+                        if (lowerName.indexOf(this.state.search.toLowerCase()) > -1) results.push(this.props.users[j]._id);
+                    }
                 }
             }
             if (results.length > 0) {
