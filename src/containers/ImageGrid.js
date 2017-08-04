@@ -225,6 +225,7 @@ class WrappedImage extends React.Component
                                        ? "error"
                                        : ""}>
                       {this.props.post.reactions.length>0 ? this.props.post.reactions.length + " " : ""}<i className="fa fa-heart"
+                                                                                                           title="Favorite" 
                                                                                                            onClick={this.doALike}/>
                   </span> 
               </div>
@@ -239,16 +240,19 @@ class WrappedImage extends React.Component
                                        ? "reblogged"
                                        : ""}>
                       {this.props.post.reblogs.length>0 ? this.props.post.reblogs.length + " " : ""}<i className="fa fa-exchange"
+                                                                                                       title="Reblog"
                                                                                                        onClick={this.doAReblog}/>
                   </span>
               </div>
               <div className={this.props.post.author_id==this.props.author_id ? "col-sm-3" : "col-sm-4"}>
                   <i className={this.state.showComments ? "fa fa-comments com-show": "fa fa-comments com-hov"}
-                     onClick={this.showComments}/>
+                     onClick={this.showComments}
+                     title="Show Reactions"/>
               </div>
               {this.props.post.author_id==this.props.author_id ?
               <div className="col-sm-3">
                   <i className="fa fa-gear" 
+                     title="Edit"
                      onClick={this.showOptions}/>
               </div> : ""}
           </div>
@@ -258,8 +262,10 @@ class WrappedImage extends React.Component
            ?  <div className = "row">
              <div className="col-sm-4" onClick={this.showOptions}><i className="fa fa-arrow-left"/> Back</div>
              <div className="col-sm-4"><span onClick={()=>this.props.grayOut(false,this.props.post)}>
-                 Edit <i className="fa fa-gears"/></span></div>
+                 <i className="fa fa-gears"
+                    title="Edit This Post"/></span></div>
              <div className="col-sm-4 error"> <i className="fa fa-trash" 
+                                                title="Delete"
                                                 onClick={this.showDelete}/> </div>     
            
            </div>

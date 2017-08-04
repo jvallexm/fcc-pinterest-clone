@@ -16790,6 +16790,7 @@ var WrappedImage = function (_React$Component2) {
                 { className: this.props.post.reactions.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "heart" : this.props.post.reactions.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reactions.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reactions.length > 0 ? "error" : "" },
                 this.props.post.reactions.length > 0 ? this.props.post.reactions.length + " " : "",
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-heart',
+                  title: 'Favorite',
                   onClick: this.doALike })
               )
             ),
@@ -16801,6 +16802,7 @@ var WrappedImage = function (_React$Component2) {
                 { className: this.props.post.reblogs.indexOf(this.props.author_id) == -1 && this.props.post.author_id != this.props.author_id ? "reblog" : this.props.post.reblogs.indexOf(this.props.author_id) != -1 && this.props.post.author_id != this.props.author_id && this.props.post.reblogs.length > 0 || this.props.post.author_id == this.props.author_id && this.props.post.reblogs.length > 0 ? "reblogged" : "" },
                 this.props.post.reblogs.length > 0 ? this.props.post.reblogs.length + " " : "",
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-exchange',
+                  title: 'Reblog',
                   onClick: this.doAReblog })
               )
             ),
@@ -16808,12 +16810,14 @@ var WrappedImage = function (_React$Component2) {
               'div',
               { className: this.props.post.author_id == this.props.author_id ? "col-sm-3" : "col-sm-4" },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: this.state.showComments ? "fa fa-comments com-show" : "fa fa-comments com-hov",
-                onClick: this.showComments })
+                onClick: this.showComments,
+                title: 'Show Reactions' })
             ),
             this.props.post.author_id == this.props.author_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'div',
               { className: 'col-sm-3' },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-gear',
+                title: 'Edit',
                 onClick: this.showOptions })
             ) : ""
           ) : !this.state.delete ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -16833,8 +16837,8 @@ var WrappedImage = function (_React$Component2) {
                 { onClick: function onClick() {
                     return _this4.props.grayOut(false, _this4.props.post);
                   } },
-                'Edit ',
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-gears' })
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-gears',
+                  title: 'Edit This Post' })
               )
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -16842,6 +16846,7 @@ var WrappedImage = function (_React$Component2) {
               { className: 'col-sm-4 error' },
               ' ',
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-trash',
+                title: 'Delete',
                 onClick: this.showDelete }),
               ' '
             )
