@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
           else
           {
              var posts = db.collection('posts');
-             var getAll = ()=>{
+             var getAll = () =>{
                posts.find({},{})
                     .toArray((err,data)=>{
                         if(err)
@@ -268,7 +268,7 @@ io.on('connection', (socket) => {
     var twitter = new Twitter({
         consumerKey: process.env.CONSUMER_KEY,
     	consumerSecret: process.env.CONSUMER_SECRET,
-    	callback: 'https://fcc-pinterest-clone-phoenixfarce.c9users.io/callback'
+    	callback: 'https://jvalle-pinterest-clone.herokuapp.com/callback'
     });
 
     var _requestSecret;
